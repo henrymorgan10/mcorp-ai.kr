@@ -195,13 +195,83 @@ Don’t steal what you’re freely allowed to honor.
 -->
 
 
+
+
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" translate="no">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M Corp — 공익 메시지 + 임팩트 시뮬레이터</title>
+
+  <!-- 제목: 영어 고정 (구글 자동 번역 방지) -->
+  <title>M-Corp AI — Ethical AI for Refugee Self-Reliance</title>
+  <meta name="google" content="notranslate" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- 한국어 설명(검색 성능 유지용) -->
   <meta name="description" content="비영리. 비데이터. 존엄을 위한 기술 — 권리 기반 착용형 AI와 난민 자립 생태계. 브라우저에서만 작동하는 임팩트 시뮬레이터 포함." />
+  <meta name="keywords" content="M-Corp AI, 공익 AI, 윤리적 AI, 난민 자립, 오프라인 AI, 임팩트 시뮬레이터, MCorp" />
+
+  <!-- 정식 URL 명시 -->
+  <link rel="canonical" href="https://mcorp.ai.kr/" />
+
+  <!-- 파비콘 / 앱 아이콘 -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <!-- Open Graph (페이스북·카톡 등 미리보기) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="M Corp AI" />
+  <meta property="og:title" content="M-Corp AI — Ethical AI for Refugee Self-Reliance" />
+  <meta property="og:description" content="비영리·비데이터·존엄을 위한 기술 — 권리 기반 착용형 AI와 난민 자립 생태계. 브라우저에서만 작동하는 임팩트 시뮬레이터 포함." />
+  <meta property="og:url" content="https://mcorp.ai.kr/" />
+  <meta property="og:image" content="https://mcorp.ai.kr/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="M-Corp AI — Ethical AI for Refugee Self-Reliance" />
+  <meta name="twitter:description" content="비영리·비데이터·존엄을 위한 기술 — 권리 기반 착용형 AI와 난민 자립 생태계." />
+  <meta name="twitter:image" content="https://mcorp.ai.kr/og-image.png" />
+
+  <!-- 구조화 데이터 (Organization + Website) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "M Corp AI",
+        "url": "https://mcorp.ai.kr/",
+        "logo": "https://mcorp.ai.kr/og-image.png",
+        "sameAs": [
+          "https://mcorp-ai.com/",
+          "https://mcorpai.org/",
+          "https://mcorp.ai.kr/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "name": "M Corp AI",
+        "url": "https://mcorp.ai.kr/",
+        "inLanguage": "ko",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://mcorp.ai.kr/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+
   <style>
     /* ===== 소개 섹션(라이트) ===== */
     :root{--txt:#222;--bg:#ffffff;--muted:#4b5563}
@@ -238,6 +308,7 @@ Don’t steal what you’re freely allowed to honor.
   </style>
 </head>
 <body>
+
 
 
 
@@ -307,7 +378,19 @@ Don’t steal what you’re freely allowed to honor.
     const root = document.createElement('div');
     root.id = 'rsr-root';
     root.innerHTML = `
-      <div class="rsr-title">Refugee Self‑Reliance</div>
+
+<div class="rsr-title" style="line-height:1.6;">
+  Refugee Self-Reliance 🌏 
+  <a href="https://mcorpai.org" target="_blank" rel="noopener" style="color:#1e90ff; text-decoration:underline;">
+    mcorpai.org
+  </a> 
+  (🎮Lower difficulty version: 
+  <a href="https://mcorp-ai.com" target="_blank" rel="noopener" style="color:#1e90ff; text-decoration:underline;">
+    mcorp-ai.com
+  </a>)
+</div>
+
+
       <div class="rsr-hud">
         <span class="rsr-badge rsr-temp">🌡️ Climate Temperature <strong id="rsr-temp">1.5°C</strong></span>
         <span class="rsr-badge">Score <strong id="rsr-score">0</strong></span>
@@ -879,7 +962,7 @@ Don’t steal what you’re freely allowed to honor.
 
 <div style="text-align: center; color: #2ecc71; margin-top: 20px;">
   <h3>Wraptris — Ethical Edition (for mcorp.ai.kr)</h3>
-  <p>🛠️ Last updated: November 30, 2025 The Tetris never stops. 🌍🔥 The climate crisis doesn’t stop either.</p>
+  <p>🛠️ Last updated: November 31, 2025 The Tetris never stops. 🌍🔥 The climate crisis doesn’t stop either.</p>
 </div>
 
 </section>
