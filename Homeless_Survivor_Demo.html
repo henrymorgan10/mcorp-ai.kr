@@ -1,0 +1,1249 @@
+<style>
+/*
+  Homeless Survivor — 3-minute demo V2.4 (paste block)
+  (c) 2026 Morgan J. (film director). Scenario and direction: Morgan J.
+  Story text, characters and artwork: (c) Morgan J., all rights reserved. Source code: Apache License 2.0.
+  Vanilla HTML/CSS/JS only. No external library, no network, no storage, no data collection.
+  Paste order inside an existing index.html: this <style> → two JSON language packs → <section id="hsd"> → the last <script>.
+  All selectors are scoped to .hsd so the host page is not touched (V2.4 B04: no body rule here; the standalone file sets its own page background).
+*/
+.hsd{--ink:#0c0e11;--paper:#f2efe9;--dim:#7d838c;--warm:#e6a35c;--muted:#8b867d;--line:#262a31;max-width:1040px;margin:0 auto;min-height:100vh;min-height:100dvh;color:var(--paper);background:#07080a;font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua","Noto Serif KR","Nanum Myeongjo",Georgia,serif;box-sizing:border-box;padding:max(10px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;position:relative}
+.hsd *{box-sizing:border-box}
+.hsd:focus{outline:none}
+.hsd[data-rec="1"][data-auto="1"],.hsd[data-rec="1"][data-auto="1"] *{cursor:none}
+.hsd .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* top bar */
+.hsd .top{display:flex;justify-content:space-between;align-items:center;gap:10px;font:13px/1.2 system-ui,"Malgun Gothic",sans-serif;color:var(--muted);min-height:44px;flex-wrap:wrap}
+.hsd .top b{font-weight:600;color:#c9c3b8;letter-spacing:.02em}
+.hsd .tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.hsd .pill{font:13px system-ui,"Malgun Gothic",sans-serif;min-height:44px;padding:6px 14px;border-radius:999px;border:1px solid #2f333a;background:none;color:#a8a39a;cursor:pointer}
+.hsd .pill[aria-pressed="true"]{border-color:var(--warm);color:var(--warm)}
+.hsd .pill:focus-visible,.hsd .btn:focus-visible,.hsd .ch:focus-visible,.hsd summary:focus-visible,.hsd input:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
+.hsd details.opts{position:relative}
+.hsd details.opts summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;padding:6px 14px;border-radius:999px;border:1px solid #2f333a;color:#a8a39a;cursor:pointer;font:13px system-ui,"Malgun Gothic",sans-serif}
+.hsd details.opts summary::-webkit-details-marker{display:none}
+.hsd details.opts[open] summary{border-color:#4a4f58}
+.hsd .optbox{position:absolute;right:0;top:50px;z-index:5;background:#0f1114;border:1px solid #2f333a;border-radius:12px;padding:10px;display:grid;gap:6px;min-width:220px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.hsd .optbox .pill{text-align:left;border-radius:10px}
+/* stage */
+.hsd .stage{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:11/5}
+.hsd .stage svg{display:block;width:100%;height:100%;transform-origin:var(--fx,50%) var(--fy,60%);transition:transform 1.6s ease}
+.hsd .stage svg.push{transform:scale(1.07);transition:transform 9s cubic-bezier(.25,.1,.25,1)}
+.hsd .stage .scene,.hsd .stage .hue{transition:filter 3.2s cubic-bezier(.4,0,.2,1)}
+.hsd .stage .warm{transition:opacity 3.2s ease}
+.hsd .stage .face{opacity:0;transition:opacity 1.6s ease}
+.hsd .stage .face.on{opacity:1}
+.hsd .stage .face.fresh path{stroke-dasharray:60;stroke-dashoffset:60;animation:hsdDraw 1.4s ease forwards}
+.hsd .stage .face .halo{opacity:0;transition:opacity 2.4s ease}
+.hsd .stage[data-tier="2"] .face.on .halo{opacity:.28}
+.hsd .stage[data-tier="3"] .face.on .halo{opacity:.6}
+.hsd .stage .face.on .eye{transform-box:fill-box;transform-origin:center;animation:hsdBlink 6.5s ease-in-out infinite}
+.hsd .stage .breath{opacity:0;animation:hsdBreath 5.2s ease-in-out infinite;animation-delay:var(--bd,0s)}
+.hsd .stage .drift{animation:hsdDrift var(--dt,40s) linear forwards}
+.hsd .stage .steam path{animation:hsdSteam 3.6s ease-in-out infinite}
+.hsd .stage .sway{transform-box:fill-box;transform-origin:50% 0;animation:hsdSway 3.4s ease-in-out infinite}
+.hsd .stage .ladle{transform-box:fill-box;transform-origin:0 0;animation:hsdLadle 1.8s ease-in-out 1}
+.hsd .stage .bloom{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,rgba(255,214,160,0) 35%,rgba(255,196,130,.32) 100%)}
+.hsd .stage .bloom.go{animation:hsdBloom 2.6s ease-out 1}
+.hsd .auto{position:absolute;left:12px;top:10px;font:11px system-ui,sans-serif;color:var(--warm);letter-spacing:.06em;opacity:.85;z-index:3}
+@keyframes hsdSteam{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(-6px);opacity:.25}}
+@keyframes hsdFall{from{transform:translateY(-20px)}to{transform:translateY(520px)}}
+@keyframes hsdDraw{to{stroke-dashoffset:0}}
+@keyframes hsdBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.15)}}
+@keyframes hsdBreath{0%,55%,100%{opacity:0;transform:translate(0,0)}70%{opacity:.22}90%{opacity:0;transform:translate(3px,-4px)}}
+@keyframes hsdDrift{to{transform:translateX(var(--dx,0px))}}
+@keyframes hsdSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes hsdLadle{0%,100%{transform:rotate(0)}45%{transform:rotate(14deg)}}
+@keyframes hsdBloom{0%{opacity:0;transform:scale(1.25)}35%{opacity:1}100%{opacity:0;transform:scale(1)}}
+/* the drawing on the back of a flyer */
+.hsd .card{position:absolute;right:4%;bottom:7%;width:min(30%,210px);aspect-ratio:4/5;background:#efe8da;border-radius:4px;box-shadow:0 8px 30px rgba(0,0,0,.6);transform:rotate(-3deg);opacity:0;transition:opacity .9s;z-index:2}
+.hsd .card.on{opacity:1}
+.hsd .card svg{width:100%;height:100%}
+.hsd .card path{stroke:#2a2622;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hsd .card.on.live path{stroke-dasharray:400;stroke-dashoffset:400;animation:hsdDraw 2.6s ease forwards}
+.hsd .card.on.live path.late{animation-delay:1.6s}
+/* panel */
+.hsd .panel{padding:12px 2px 6px;display:flex;flex-direction:column;gap:11px;flex:1}
+.hsd .status{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:14px;align-items:end;font:12px system-ui,"Malgun Gothic",sans-serif;color:var(--muted)}
+.hsd .bar em{font-style:normal;color:#c9c3b8;margin-left:6px}
+.hsd .bar i{display:block;height:3px;background:#22262c;margin-top:6px;border-radius:2px;overflow:hidden}
+.hsd .bar b{display:block;height:100%;background:#c9c3b8;transition:width 1.2s ease,background-color 1.2s ease}
+.hsd .bar.up b{background:var(--warm)}
+.hsd .coins{white-space:nowrap;letter-spacing:.12em}
+.hsd .coins span{color:#c9c3b8}
+.hsd .coins span.gone{color:#33373e}
+.hsd .when{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.hsd .slug{font-style:italic;font-size:15px;color:#a8a39a}
+.hsd .days{display:flex;gap:3px;align-items:center}
+.hsd .days span{width:5px;height:5px;border-radius:50%;background:#262a31}
+.hsd .days span.past{background:#6f6a62}
+.hsd .days span.now{background:var(--warm)}
+.hsd .text{font-size:clamp(17px,2.1vw,20px);line-height:1.8;max-width:66ch;word-break:keep-all;min-height:4.2em}
+.hsd .text p{margin:0 0 .55em}
+.hsd .text .sub{display:block;font:14px/1.6 system-ui,"Malgun Gothic",sans-serif;color:#8b867d;margin-top:2px}
+.hsd .inner{font-style:italic;color:#cbbfa6}
+.hsd .result{color:#d8d1c4}
+.hsd .trace{font:14px/1.6 system-ui,"Malgun Gothic",sans-serif;color:#c2b38f;margin:0;padding-left:12px;border-left:2px solid #4a3d2a}
+.hsd .trace small{color:#7d7566;margin-left:6px}
+.hsd .why{min-height:1.6em;font-size:15px;font-style:italic;color:#c2b38f}
+.hsd .choices{display:grid;gap:8px}
+.hsd .ch{font:16px/1.4 system-ui,"Malgun Gothic",sans-serif;text-align:left;color:var(--paper);background:#121418;border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:48px;cursor:pointer;transition:background .2s,border-color .2s;display:flex;gap:6px;align-items:baseline}
+.hsd .ch:hover{border-color:#4a4f58}
+.hsd .ch .k{display:inline-block;min-width:22px;color:var(--warm)}
+.hsd .ch.dim{color:var(--dim);cursor:default;background:#0e1013}
+.hsd .ch.dim .t{filter:blur(2.2px)}
+.hsd[data-blurless="1"] .ch.dim .t{filter:blur(.7px)}
+.hsd .ch.back .t{animation:hsdBack 1.4s ease forwards}
+@keyframes hsdBack{from{filter:blur(2.2px);opacity:.45}to{filter:blur(0);opacity:1}}
+.hsd .ch.press{background:#1d2026;border-color:var(--warm)}
+/* title, question, ending */
+.hsd .title{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:24px 8px}
+.hsd .title h1{font-weight:400;font-size:clamp(34px,6vw,64px);letter-spacing:.03em;margin:0}
+.hsd .title .ko{font-size:clamp(15px,2vw,20px);letter-spacing:.32em;color:#9a958c}
+.hsd .title .form{font:13px system-ui,"Malgun Gothic",sans-serif;color:#8b867d;letter-spacing:.04em;margin-top:2px}
+.hsd .title .tag{font-size:clamp(16px,2.1vw,21px);max-width:44ch;line-height:1.6;margin:14px 0 0}
+.hsd .title .tagk{font-size:14px;color:#8b867d;max-width:46ch;word-break:keep-all;margin:0;line-height:1.7}
+.hsd .title .by{font-size:14px;color:#a8a39a;margin-top:10px}
+.hsd .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.hsd .btn{font:15px system-ui,"Malgun Gothic",sans-serif;min-height:48px;padding:10px 20px;border-radius:999px;border:1px solid #3a3e46;background:none;color:var(--paper);cursor:pointer}
+.hsd .btn.pri{background:var(--paper);color:#07080a;border-color:var(--paper)}
+.hsd .btn.press{border-color:var(--warm);box-shadow:0 0 0 2px var(--warm)}
+.hsd .note{font:12.5px/1.6 system-ui,"Malgun Gothic",sans-serif;color:#9a958c;text-align:center;max-width:60ch;margin:0 auto}
+.hsd .ask{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;text-align:center;padding:30px 10px;background:#000;border-radius:12px}
+.hsd .ask p{max-width:40ch;font-size:clamp(18px,2.4vw,24px);line-height:1.7;margin:0;word-break:keep-all}
+.hsd .ask input{font:20px "Iowan Old Style","Palatino Linotype","Noto Serif KR",Georgia,serif;background:transparent;border:0;border-bottom:1px solid #4a4f58;color:var(--paper);text-align:center;padding:8px 4px;width:min(320px,80%);border-radius:0}
+.hsd .ask small{font:12.5px system-ui,"Malgun Gothic",sans-serif;color:#9a958c}
+.hsd .recap{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:4px;max-width:52ch;text-align:center}
+.hsd .recap li{font-size:15px;line-height:1.6;color:#d8d1c4}
+.hsd .recap li .sub{display:block;font:13px system-ui,"Malgun Gothic",sans-serif;color:#7d7566}
+.hsd .quote{font-style:italic;color:#e3cfa6;margin:8px 0 0}
+.hsd .rules{font:13px/1.7 system-ui,"Malgun Gothic",sans-serif;color:#8b867d;max-width:52ch;margin:10px 0 0}
+.hsd .foot{font:12px system-ui,sans-serif;color:#8b867d;text-align:center;padding-top:8px}
+.hsd .selfc{font:12.5px/1.5 system-ui,"Malgun Gothic",sans-serif;color:#a39d92;text-align:center;margin:0;max-width:60ch}
+.hsd .title .selfc:first-of-type{margin-top:18px}
+.hsd .nextv{margin:12px 0 0;max-width:52ch;border-top:1px solid #262a31;padding-top:10px}
+.hsd .nextv .nvl{font:12.5px system-ui,"Malgun Gothic",sans-serif;color:#9a958c;margin:0 0 4px}
+.hsd .nextv .nvt{font-style:italic;color:#e3cfa6;margin:0;line-height:1.6}
+.hsd .nextv .nvt .sub{display:block;font:13px system-ui,"Malgun Gothic",sans-serif;color:#8b867d;font-style:normal}
+.hsd .why.hint{color:#a8a39a}
+.hsd .autobar{position:absolute;right:10px;top:8px;display:flex;gap:6px;z-index:4}
+.hsd .autobar .pill{background:rgba(7,8,10,.72);color:#e3cfa6;border-color:#4a4f58}
+.hsd .card.mini{width:min(16%,124px);left:3%;right:auto;bottom:auto;top:6%;transform:rotate(-3deg)}
+.hsd .title .selfc+.selfc{margin-top:-6px}
+@media (max-width:640px){.hsd .stage{aspect-ratio:4/3}.hsd .status{grid-template-columns:repeat(3,1fr);gap:10px}.hsd .coins{grid-column:1/-1}.hsd .card{width:40%}.hsd .optbox{right:-6px}}
+.hsd[data-wide="1"]{max-width:max(760px,min(1480px,calc((100vh - 520px) * 2.2)))}
+.hsd[data-wide="1"][data-sub="1"]{max-width:max(760px,min(1480px,calc((100vh - 640px) * 2.2)))}
+.hsd[data-wide="1"] .text{font-size:clamp(17px,1.2vw,20px);min-height:0}
+.hsd[data-wide="1"] .choices{grid-template-columns:1fr 1fr}
+.hsd[data-wide="1"] .title{padding:8px}
+.hsd[data-rec="1"][data-auto="1"] .tools{visibility:hidden}
+.hsd[data-vertical="1"]{max-width:max(360px,min(980px,calc((100vh - 760px) * .8)))}
+.hsd[data-vertical="1"] .stage{aspect-ratio:4/5}
+/* motion off (OS setting or in-demo option): every decorative movement stops, meaning is kept by text */
+.hsd[data-still="1"] .stage .scene,.hsd[data-still="1"] .stage .hue,.hsd[data-still="1"] .stage .warm,.hsd[data-still="1"] .stage .face,.hsd[data-still="1"] .stage .halo,.hsd[data-still="1"] .card,.hsd[data-still="1"] .bar b,.hsd[data-still="1"] .stage svg{transition:none}
+.hsd[data-still="1"] .stage svg.push{transform:none}
+.hsd[data-still="1"] .breath,.hsd[data-still="1"] .drift,.hsd[data-still="1"] .sway,.hsd[data-still="1"] .ladle,.hsd[data-still="1"] .steam path,.hsd[data-still="1"] .eye,.hsd[data-still="1"] .snow circle,.hsd[data-still="1"] .bloom,.hsd[data-still="1"] .ch.back .t,.hsd[data-still="1"] .face.fresh path,.hsd[data-still="1"] .card.on.live path{animation:none!important;stroke-dashoffset:0}
+@media (prefers-reduced-motion:reduce){.hsd .stage .scene,.hsd .stage .hue,.hsd .stage .face,.hsd .card,.hsd .bar b{transition:none}.hsd .breath,.hsd .drift,.hsd .sway,.hsd .ladle,.hsd .steam path,.hsd .eye,.hsd .snow circle,.hsd .bloom,.hsd .ch.back .t,.hsd .face.fresh path,.hsd .card.on.live path{animation:none!important;stroke-dashoffset:0}}
+</style>
+<script type="application/json" data-hs-pack="demo-lang" data-lang="en">
+{"name":"English",
+"names":{"hero":"Daniel",
+"son":"Leo"},"strings":{"top":"Homeless Survivor, 3-minute demo",
+"ui.opts":"Options",
+"ui.motion":"Motion",
+"ui.blur":"Lighter blur",
+"ui.num":"Show numbers",
+"ui.dual":"Both languages",
+"ui.next":"Continue",
+"ui.cant":"cannot think of it right now",
+"ui.auto":"Guided play",
+"ui.day":"Day {n} of 30",
+"alt.park.dawn":"A winter park at dawn. A man sits curled at the end of a bench, away from the lamp. People walk past.",
+"alt.park.noon":"The same park in the afternoon. Snow has gathered on the empty part of the bench. A man with a briefcase walks near it.",
+"alt.park.omen":"The park at dawn under a heavier sky. Strangers linger near the square.",
+"alt.paper":"A folded sheet of paper sits beside his backpack.",
+"alt.face":"One passer-by now has a face, drawn in light, turned toward the bench.",
+"alt.kitchen":"A free meal center. A volunteer holds a ladle behind the counter. A bowl of soup is steaming.",
+"alt.kitchen.seat":"The meal center after lunch. A man sits at a side table. The volunteer stands beside him with a flyer and a pen.",
+"alt.house":"A room at Sunshine House. A director stands with a small boy. A man stands a little apart. Through the window, two swings, one of them blue.",
+"t.title":"Homeless Survivor",
+"t.form":"A 2D text interactive cinema",
+"t.tag":"Thirty days of a father guarding his child's hope, in a darkness no one sees.",
+"t.by":"A film by Morgan J. Written and directed by Morgan J.",
+"t.play":"Play the demo",
+"t.watch":"Watch it play (3 min)",
+"t.note":"A short, compressed preview of three days. Play at your own pace, or watch a guided three-minute presentation.",
+"q.ask":"Before you begin Homeless Survivor, is there something you want to say to the child you love?",
+"q.label":"Words for your child",
+"q.hint":"Up to 10 characters. Nothing is saved. It is gone when you close this page.",
+"q.go":"Begin",
+"q.skip":"Skip",
+"bar.hun":"Fullness",
+"bar.se":"Self-esteem",
+"bar.ho":"Hope",
+"coins":"Coins",
+"st.hun.0":"Full",
+"st.hun.1":"Fine",
+"st.hun.2":"Hungry",
+"st.hun.3":"Starving",
+"st.hun.4":"Exhausted",
+"st.se.0":"Steady",
+"st.se.1":"Fine",
+"st.se.2":"Shaken",
+"st.se.3":"Crumbling",
+"st.se.4":"Panic",
+"st.ho.0":"Light",
+"st.ho.1":"Warmth",
+"st.ho.2":"Faint",
+"st.ho.3":"Ashen",
+"st.ho.4":"Dark",
+"w.1":"Day 1. Morning, the park bench.",
+"w.2":"Day 1. Noon, the meal center.",
+"w.3":"Day 1. Afternoon, the park.",
+"w.4":"Day 2. Afternoon, Sunshine House.",
+"w.5":"Day 3. Dawn, the park.",
+"s1":"He has not eaten since lunch yesterday. His stomach is so empty that he can hear it. Across the park, someone opens a bag of bread.",
+"s1.p":"A man with a briefcase walks past the bench. He does not slow down.",
+"s1.in":"When you're hungry, your thoughts get narrow.",
+"s1.c1":"Look in the trash can.",
+"s1.c2":"Walk toward the meal center.",
+"s1.c3":"Say hello to the person eating bread.",
+"s1.c4":"Try to draw his son's face from the photo.",
+"why.1":"His stomach answers first. That thought will have to wait.",
+"why.2":"The smell of bread pushes the thought away. Once he eats, it may come back.",
+"why.3":"The thought starts toward it, then trips on the hunger. Food first. Then the rest.",
+"why.4":"He can see the thought. He just can't reach it yet.",
+"why.5":"Later. When his hands stop shaking.",
+"why.6":"Not yet.",
+"s1.r1":"Empty cups and old newspaper. Nothing to eat. He remembers the old man's directions to the meal center.",
+"s1.r2":"On the cold path, each step costs a little more than it should. He follows the old man's directions across the big road.",
+"s2":"The woman behind the counter holds a ladle. “Is this your first time here? What's your name?” Someone behind him clears his throat. {hero} tries to remember the last time he said his own name out loud.",
+"s2.c1":"“{hero}.”",
+"s2.c2":"Just lower his head.",
+"s2.r1":"“{hero}, it's hot. Be careful.” Steam rises from the bowl. The way she says his name feels warmer than the soup.",
+"s2.r2":"She does not ask again. She gives him a little more soup. He sits in the corner.",
+"s3":"As the soup goes down, the thoughts he couldn't hold this morning come back, one by one. She hands him the back of a flyer and a pen.",
+"s3.c1":"Try to draw his son's face from the photo.",
+"s3.c2":"Say thank you and rest a while.",
+"s3.q":"The photo is old. {son} was three then. What does {hero} draw first?",
+"s3.d1":"The ears, a little big.",
+"s3.d2":"The hair that stands up at the crown.",
+"s3.d3":"The dimple on one cheek.",
+"s3.r1":"A face he couldn't picture this morning. A round face.",
+"s3.r1.d1":"The ears are a little big. It looks like {son}.",
+"s3.r1.d2":"A little hair stands up at the crown. It looks like {son}.",
+"s3.r1.d3":"One cheek has a small dimple. It looks like {son}.",
+"s3.fold":"He folds the paper twice and puts it in the bag, next to the photo.",
+"s3.r2":"“You're welcome.” She smiles. For a while, he only listens to the spoons.",
+"s4":"In the afternoon, a man with a briefcase passes the bench for the third time today. He slows down near {hero}.",
+"s4.c1":"“Good afternoon.”",
+"s4.c2":"Look down at the ground.",
+"s4.r1":"The man stops. “Good afternoon.” For the first time, {hero} sees his face.",
+"s4.r2":"The man walks on. His face stays a shadow.",
+"s5a":"The director points to a sink. “You can wash your hands here.” {hero} folds his coat over one arm. A small pair of shoes waits beside the inner door.",
+"s5":"“This is someone who knew your mother and father,” the director says. {son} stays beside her. “Who are you, Mister?” {hero} lowers his hand before it reaches the child's head.",
+"s5.d1":"The ears are a little big. They have not changed.",
+"s5.d2":"At the crown, a little hair still stands up.",
+"s5.d3":"When he speaks, a dimple appears on one cheek.",
+"s5.c1":"Ask about the swing.",
+"s5.c2":"Let him choose a seat.",
+"s5.r1":"“Which swing do you like?” {son} points through the window. “The blue one. The other one makes a noise.” He looks outside while {hero} stands beside him.",
+"s5.r2":"{son} moves a chair away from the door. “You can sit there.” {hero} sits. The child stays standing for a moment, then pulls out the next chair.",
+"s5.out":"At the door, {son} turns back. “I saw a little dinosaur on a key ring.” He shows its size with two fingers. The director waits until he finishes speaking.",
+"s6":"The sky is one shade heavier. Near the square, strangers are lingering.",
+"s6.c1":"Walk toward the meal center.",
+"s6.r1":"The man with the briefcase passes, earlier than usual. “Watch your bag,” he says, without stopping. {hero} pulls the strap tight. A moment later, someone brushes past him and finds nothing.",
+"s6.r2":"Someone brushes past him near the square. By the meal center, he notices that the coin pocket is lighter.",
+"tr.hun.up":"The shaking in his hands eases.",
+"tr.hun.down":"His legs feel the cold path first.",
+"tr.se.up":"His back straightens a little.",
+"tr.se.down":"His eyes stay on the ground a little longer.",
+"tr.ho.up":"The light seems a little warmer.",
+"tr.face":"Someone in the park has a face now.",
+"tr.name":"Today, for the first time, someone called him by his name.",
+"tr.guard":"Someone looked out for him.",
+"tr.money":"The coin pocket is lighter.",
+"tr.son":"A blue swing. A boy who chose it.",
+"end.h":"That was three days of Homeless Survivor.",
+"rc.trash":"He looked in the trash can first.",
+"rc.walk":"He walked straight to the meal center.",
+"rc.name":"He said his name out loud.",
+"rc.head":"He lowered his head, and was given a little more soup.",
+"rc.d1":"He drew a round face with big ears.",
+"rc.d2":"He drew a round face with hair standing up at the crown.",
+"rc.d3":"He drew a round face with a dimple.",
+"rc.rest":"He rested and listened to the spoons.",
+"rc.greet":"He said good afternoon, and a stranger got a face.",
+"rc.down":"He looked down, and the man stayed a shadow.",
+"rc.swing":"He asked {son} about the swing.",
+"rc.seat":"He let {son} choose where to sit.",
+"rc.guard":"On a heavy morning, the man he had greeted told him to watch his bag.",
+"rc.robbed":"On a heavy morning, the coin pocket came back lighter.",
+"end.note":"First page of his notebook: “{note}”",
+"end.rules":"Hunger narrows the choices. Hope brings the color back. A stranger who is greeted gets a face.",
+"end.day":"In the full game, this was day 3 of 30. {son}'s birthday is in four days.",
+"end.other":"A different choice opens a different day.",
+"end.replay":"Play again",
+"end.watch":"Watch it play",
+"end.credit":"A film by Morgan J. Written and directed by Morgan J. © 2026 Morgan J. All rights reserved.",
+"ui.selfContained":"No external dependencies. Runs as a single file.",
+"ui.hint":"His thoughts can't reach that far right now.",
+"ui.pause":"Pause",
+"ui.resume":"Resume",
+"ui.takeover":"Play from here",
+"nv.label":"At the next visit, in the full game",
+"nv.swing":"“The blue one is quiet,” the child says. He looks at the swing before choosing where to sit.",
+"nv.seat":"The child leaves the chair beside him empty. “This one,” he says. {hero} waits until the child sits first."}}
+</script>
+<script type="application/json" data-hs-pack="demo-lang" data-lang="ko">
+{"name":"한국어",
+"names":{"hero":"현수",
+"son":"도윤"},"strings":{"top":"홈리스 서바이버, 3분 데모",
+"ui.opts":"설정",
+"ui.motion":"움직임",
+"ui.blur":"흐림 줄이기",
+"ui.num":"숫자 보기",
+"ui.dual":"두 언어 함께 보기",
+"ui.next":"계속",
+"ui.cant":"지금은 떠올릴 수 없음",
+"ui.auto":"자동 시연",
+"ui.day":"30일 중 {n}일째",
+"alt.park.dawn":"겨울 새벽의 공원. 가로등 빛이 닿지 않는 벤치 끝에 한 남자가 웅크려 앉아 있다. 사람들이 지나간다.",
+"alt.park.noon":"오후의 같은 공원. 아무도 앉지 않은 벤치 쪽에 눈이 쌓였다. 서류 가방을 든 남자가 그 근처를 걷는다.",
+"alt.park.omen":"한 톤 무거운 하늘 아래 새벽 공원. 광장 쪽에 낯선 사람들이 서성인다.",
+"alt.paper":"배낭 옆에 접힌 종이 한 장이 있다.",
+"alt.face":"행인 한 명에게 빛으로 그린 얼굴이 생겼고, 벤치 쪽으로 몸을 돌렸다.",
+"alt.kitchen":"무료 급식소. 봉사자가 배식대 뒤에서 국자를 들고 있다. 국그릇에서 김이 오른다.",
+"alt.kitchen.seat":"점심이 끝난 급식소. 한 남자가 구석 탁자에 앉아 있다. 봉사자가 전단과 볼펜을 들고 곁에 서 있다.",
+"alt.house":"햇살의 집의 방. 원장 곁에 작은 남자아이가 서 있다. 한 남자가 조금 떨어져 서 있다. 창밖에 그네 두 개, 그중 하나는 파란색이다.",
+"t.title":"Homeless Survivor",
+"t.form":"2D 텍스트 인터랙티브 시네마",
+"t.tag":"아무도 보지 않는 어둠 속에서, 자식의 희망을 지켜내는 한 아버지의 30일",
+"t.by":"감독 Morgan J. · 시나리오·연출 Morgan J.",
+"t.play":"직접 해 보기",
+"t.watch":"자동으로 보기 (3분)",
+"t.note":"사흘의 일부를 짧게 압축한 시연입니다. 직접 천천히 선택하거나 약 3분의 자동 시연으로 볼 수 있습니다.",
+"q.ask":"홈리스 서바이버를 시작하기 전에, 당신의 사랑하는 자식에게 하고 싶은 말이 있나요?",
+"q.label":"아이에게 하고 싶은 말",
+"q.hint":"10글자 이내. 어디에도 저장되지 않으며, 페이지를 닫으면 사라집니다.",
+"q.go":"시작하기",
+"q.skip":"건너뛰기",
+"bar.hun":"포만",
+"bar.se":"자존감",
+"bar.ho":"희망",
+"coins":"동전",
+"st.hun.0":"배부름",
+"st.hun.1":"괜찮음",
+"st.hun.2":"허기",
+"st.hun.3":"굶주림",
+"st.hun.4":"탈진",
+"st.se.0":"단단함",
+"st.se.1":"괜찮음",
+"st.se.2":"흔들림",
+"st.se.3":"무너짐",
+"st.se.4":"공황",
+"st.ho.0":"빛",
+"st.ho.1":"온기",
+"st.ho.2":"희미함",
+"st.ho.3":"잿빛",
+"st.ho.4":"어둠",
+"w.1":"1일. 아침, 공원 벤치",
+"w.2":"1일. 점심, 급식소",
+"w.3":"1일. 오후, 공원",
+"w.4":"2일. 오후, 햇살의 집",
+"w.5":"3일. 새벽, 공원",
+"s1":"어제 점심 이후로 아무것도 먹지 못했다. 배 속이 비어 가는 소리가 귀에까지 들린다. 공원 건너편에서 누군가 빵 봉지를 뜯는다.",
+"s1.p":"서류 가방을 든 남자가 벤치 앞을 지나간다. 걸음이 느려지지 않는다.",
+"s1.in":"배가 고프면, 생각이 좁아진다.",
+"s1.c1":"쓰레기통을 본다.",
+"s1.c2":"급식소 쪽으로 걸음을 옮긴다.",
+"s1.c3":"빵을 먹는 사람에게 인사한다.",
+"s1.c4":"사진 속 아들의 얼굴을 그려 본다.",
+"why.1":"배 속이 먼저 대답한다. 그 생각은 조금 뒤에.",
+"why.2":"빵 냄새가 생각을 밀어낸다. 배를 채우면, 생각도 돌아올 것이다.",
+"why.3":"생각이 거기까지 가다가, 허기에 걸려 넘어진다. 먼저 먹고, 그다음에.",
+"why.4":"그 생각이 보인다. 아직 손이 닿지 않을 뿐이다.",
+"why.5":"나중에. 손이 떨리지 않을 때.",
+"why.6":"아직은.",
+"s1.r1":"빈 컵과 신문지. 먹을 것은 없다. 노인이 알려 준 급식소 길이 떠오른다.",
+"s1.r2":"차가운 길에서는 한 걸음이 조금씩 더 비싸다. 그는 노인이 알려 준 대로 큰길을 건넌다.",
+"s2":"배식대 너머의 여자가 국자를 든 채 묻는다. “처음 오셨죠? 성함이 어떻게 되세요?” 뒤에 선 사람이 헛기침을 한다. {hero}는 자기 이름을 마지막으로 소리 내어 말한 게 언제였는지 떠올리려 한다.",
+"s2.c1":"“{hero}입니다.”",
+"s2.c2":"고개만 숙인다.",
+"s2.r1":"“{hero} 님, 뜨거우니까 조심하세요.” 국그릇에서 김이 오른다. 이름 뒤에 붙은 ‘님’이라는 글자가 국보다 뜨겁다.",
+"s2.r2":"여자는 더 묻지 않고 국을 조금 더 떠 준다. 그는 구석 자리에 앉는다.",
+"s3":"국물이 목을 타고 내려가자, 아침에 붙잡지 못했던 생각들이 하나씩 돌아온다. 여자가 전단 뒷면과 볼펜을 건넨다.",
+"s3.c1":"사진 속 아들의 얼굴을 그려 본다.",
+"s3.c2":"고맙다고 말하고 잠시 쉰다.",
+"s3.q":"사진은 오래되었다. 그때 {son}은 세 살이었다. {hero}는 무엇부터 그릴까?",
+"s3.d1":"조금 큰 귀.",
+"s3.d2":"정수리에 뻗친 머리카락.",
+"s3.d3":"한쪽 볼의 보조개.",
+"s3.r1":"아침에는 떠올리지 못했던 얼굴이다. 동그란 얼굴.",
+"s3.r1.d1":"귀가 조금 크다. {son}을 닮았다.",
+"s3.r1.d2":"정수리 머리카락이 조금 뻗쳐 있다. {son}을 닮았다.",
+"s3.r1.d3":"한쪽 볼에 작은 보조개가 있다. {son}을 닮았다.",
+"s3.fold":"그는 종이를 두 번 접어, 사진 옆에 넣는다.",
+"s3.r2":"“별말씀을요.” 여자가 웃는다. 한동안 그는 숟가락 소리만 듣는다.",
+"s4":"오후, 서류 가방을 든 남자가 오늘 세 번째로 벤치 앞을 지난다. {hero} 앞에서 걸음이 조금 느려진다.",
+"s4.c1":"“안녕하세요.”",
+"s4.c2":"땅을 내려다본다.",
+"s4.r1":"남자가 멈춘다. “안녕하세요.” 처음으로 {hero}는 그의 얼굴을 본다.",
+"s4.r2":"남자는 그대로 지나간다. 그의 얼굴은 그림자로 남는다.",
+"s5a":"원장이 세면대를 가리킨다. “여기서 손 씻으시면 돼요.” {hero}는 외투를 한쪽 팔에 건다. 안쪽 문 옆에 작은 신발 한 켤레가 놓여 있다.",
+"s5":"“엄마와 아빠를 알던 분이야.” 원장이 말한다. {son}은 원장 곁에 선다. “아저씨 누구세요?” {hero}는 아이 머리에 닿기 전에 손을 내린다.",
+"s5.d1":"귀가 조금 크다. 그대로다.",
+"s5.d2":"정수리의 머리카락이 아직도 뻗쳐 있다.",
+"s5.d3":"말할 때 한쪽 볼에 보조개가 팬다.",
+"s5.c1":"그네 이야기를 묻는다.",
+"s5.c2":"앉을 자리를 맡긴다.",
+"s5.r1":"“어느 그네가 좋아?” {son}이 창밖을 가리킨다. “파란 거요. 다른 건 소리가 나요.” {son}이 바깥을 보는 동안 {hero}는 곁에 선다.",
+"s5.r2":"{son}이 의자를 문에서 조금 떼어 놓는다. “거기 앉으세요.” {hero}가 앉는다. 아이는 잠시 서 있다가 옆 의자를 꺼낸다.",
+"s5.out":"문 앞에서 {son}이 돌아본다. “작은 공룡 열쇠고리를 봤어요.” 아이가 손가락 두 개로 크기를 보여 준다. 원장은 아이의 말이 끝날 때까지 기다린다.",
+"s6":"하늘이 한 톤 무겁다. 광장 쪽에 낯선 사람들이 서성인다.",
+"s6.c1":"급식소 쪽으로 걸음을 옮긴다.",
+"s6.r1":"서류 가방의 남자가 평소보다 일찍 지나간다. “가방 조심하세요.” 걸음을 멈추지 않고 한 말이다. {hero}는 끈을 바짝 당긴다. 잠시 뒤, 누군가 그를 스치고 지나가지만 아무것도 가져가지 못한다.",
+"s6.r2":"광장 근처에서 누군가 그를 스치고 지나간다. 급식소 앞에 와서야, 동전 주머니가 가벼워진 것을 안다.",
+"tr.hun.up":"손끝의 떨림이 조금 줄었다.",
+"tr.hun.down":"다리가 차가운 길을 먼저 느낀다.",
+"tr.se.up":"등이 조금 펴진다.",
+"tr.se.down":"시선이 바닥에 조금 더 오래 머문다.",
+"tr.ho.up":"빛이 조금 따뜻해 보인다.",
+"tr.face":"공원의 누군가에게 얼굴이 생겼다.",
+"tr.name":"오늘 처음으로 누군가가 이름을 불러 주었다.",
+"tr.guard":"누군가 그를 챙겨 주었다.",
+"tr.money":"동전 주머니가 가볍다.",
+"tr.son":"파란 그네. 그것을 고른 아이.",
+"end.h":"홈리스 서바이버의 사흘이었습니다.",
+"rc.trash":"그는 먼저 쓰레기통을 보았다.",
+"rc.walk":"그는 곧장 급식소로 걸었다.",
+"rc.name":"그는 자기 이름을 소리 내어 말했다.",
+"rc.head":"그는 고개를 숙였고, 국을 조금 더 받았다.",
+"rc.d1":"그는 귀가 큰 동그란 얼굴을 그렸다.",
+"rc.d2":"그는 정수리 머리카락이 뻗친 동그란 얼굴을 그렸다.",
+"rc.d3":"그는 보조개가 있는 동그란 얼굴을 그렸다.",
+"rc.rest":"그는 쉬면서 숟가락 소리를 들었다.",
+"rc.greet":"그가 인사했고, 낯선 사람에게 얼굴이 생겼다.",
+"rc.down":"그는 땅을 보았고, 그 남자는 그림자로 남았다.",
+"rc.swing":"그는 {son}에게 그네 이야기를 물었다.",
+"rc.seat":"그는 앉을 자리를 {son}에게 맡겼다.",
+"rc.guard":"무거운 아침, 그가 인사했던 남자가 가방을 조심하라고 일러 주었다.",
+"rc.robbed":"무거운 아침, 동전 주머니가 가벼워졌다.",
+"end.note":"수첩 첫 장에 적힌 말: “{note}”",
+"end.rules":"허기가 선택지를 좁힌다. 희망이 세계에 색을 돌려준다. 인사받은 낯선 사람에게 얼굴이 생긴다.",
+"end.day":"본편에서는 30일 가운데 사흘째입니다. {son}의 생일은 나흘 뒤입니다.",
+"end.other":"다른 선택은 다른 하루를 엽니다.",
+"end.replay":"다시 해 보기",
+"end.watch":"자동으로 보기",
+"end.credit":"감독 Morgan J. · 시나리오·연출 Morgan J. · © 2026 Morgan J. 모든 권리 보유.",
+"ui.selfContained":"외부 의존성이 없으며 단일 파일로 구성되어 있습니다.",
+"ui.hint":"생각이 거기까지 닿지 않는다.",
+"ui.pause":"잠시 멈춤",
+"ui.resume":"이어서 보기",
+"ui.takeover":"직접 이어 하기",
+"nv.label":"본편의 다음 면회에서",
+"nv.swing":"“파란 건 조용해요.” 아이는 앉을 자리를 고르기 전에 그네를 본다.",
+"nv.seat":"아이가 자기 옆 의자를 비워 둔다. “이거요.” {hero}는 아이가 먼저 앉을 때까지 기다린다."}}
+</script>
+<section class="hsd" id="hsd" aria-label="Homeless Survivor demo"></section>
+<script>
+(function () {
+  'use strict';
+  /* Homeless Survivor 3-minute demo V2.4 — (c) 2026 Morgan J. Scenario and direction: Morgan J.
+     Story text, characters and artwork: (c) Morgan J., all rights reserved. Code: Apache License 2.0.
+     One IIFE. Nothing is added to window, no built-in method is overridden, nothing is stored or sent.
+     V2.4 applies Demo V2.3 fixes B01-B11 and plan V2.1 TN-10/TN-11 and the self-contained note (ch.185). */
+  var NS = 'http://www.w3.org/2000/svg', root = document.getElementById('hsd');
+  if (!root || root.getAttribute('data-ready')) { return; }
+  root.setAttribute('data-ready', '1');
+
+  /* ===== 1. language packs (English is the fallback for any missing key) ===== */
+  var PACKS = {}, CODES = [];
+  Array.prototype.slice.call(document.querySelectorAll('script[type="application/json"][data-hs-pack="demo-lang"]')).forEach(function (n) {
+    try { var code = n.getAttribute('data-lang'); PACKS[code] = JSON.parse(n.textContent); CODES.push(code); } catch (e) { /* a broken pack is skipped */ }
+  });
+  if (!PACKS.en) { root.textContent = 'Homeless Survivor demo: English language pack is missing.'; return; }
+  var lang = 'en', QS = location.search, rec = /[?&](autoplay|demo)=1/.test(QS), ql = (QS.match(/[?&]lang=([a-z-]+)/i) || [])[1];
+  if (ql && PACKS[ql]) { lang = ql; }
+  function other() { return lang === 'en' ? (PACKS.ko ? 'ko' : 'en') : 'en'; }
+  function Tl(code, k) {
+    var p = PACKS[code] || PACKS.en, v = p.strings[k];
+    if (v == null) { v = PACKS.en.strings[k]; }
+    if (v == null) { return k; }
+    return v.replace(/\{hero\}/g, p.names.hero).replace(/\{son\}/g, p.names.son).replace(/\{note\}/g, st ? st.note : '');
+  }
+  function T(k) { return Tl(lang, k); }
+
+  /* ===== 2. level design table: every tunable number lives here (V2.0 ch.170) ===== */
+  var LD = {
+    start: { hun: 38, se: 50, ho: 15, money: 2 },
+    trash: { hun: -3, se: -1 }, walk: { hun: -3 }, meal: { hun: 35 },
+    name: { se: 6, ho: 20 }, head: { hun: 5, ho: 8 },
+    draw: { ho: 10, se: 3 }, rest: { se: 4 },
+    greet: { ho: 6, se: 4 }, swing: { ho: 8 }, seat: { se: 5, ho: 5 },
+    nights: { hun: -24, se: -3 },          /* day 2 and the night before day 3, compressed */
+    guard: { se: 2 }, robbed: { se: -3 }, /* plus half the coins */
+    tutorialForce: 2,                      /* C0103: display-only narrowing, numbers are not touched */
+    tunnelLines: 5, sonBoost: 0.5, satMin: 0.05, hueGain: 1.6, bloomAt: 10
+  };
+
+  /* ===== 3. small helpers ===== */
+  function s(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) { if (attrs[k] != null) { e.setAttribute(k, attrs[k]); } } if (parent) { parent.appendChild(e); } return e; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) { e.className = cls; } if (text != null) { e.textContent = text; } return e; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = Math.imul(a ^ (a >>> 15), a | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function mq(q) { return window.matchMedia ? window.matchMedia(q) : { matches: false }; }
+  function onMq(m, fn) { if (m.addEventListener) { m.addEventListener('change', fn); } else if (m.addListener) { m.addListener(fn); } }
+  var mqReduce = mq('(prefers-reduced-motion: reduce)'), mqNarrow = mq('(max-width: 640px)');
+  var opt = { motion: true, blur: false, num: false, dual: /[?&]sub=1/.test(location.search), vertical: /[?&]ratio=9x16/.test(location.search) };
+  function still() { return !opt.motion || mqReduce.matches; }
+  var fxTimers = [];
+  function fxLater(ms, fn) { fxTimers.push(setTimeout(fn, ms)); }
+  function stopFx() { fxTimers.forEach(clearTimeout); fxTimers = []; }
+
+  /* ===== 4. state ===== */
+  var st = null, mode = 'title', view = null, shownHo = null, sceneKey = '', locked = false, kbd = false;
+  function reset() {
+    var note = st ? st.note : '';
+    st = { hun: LD.start.hun, se: LD.start.se, ho: LD.start.ho, money: LD.start.money, faces: [], tn: 0, note: note, dimmed: {}, path: {} };
+    shownHo = st.ho; sceneKey = '';
+  }
+  function change(d) {
+    var out = [];
+    ['hun', 'se', 'ho'].forEach(function (k) {
+      if (!d[k]) { return; }
+      var b = st[k]; st[k] = clamp(st[k] + d[k], 0, 100);
+      if (st[k] !== b) { out.push({ k: k, d: st[k] - b }); }
+    });
+    if (d.money) { var m = st.money; st.money = Math.max(0, st.money + d.money); if (st.money !== m) { out.push({ k: 'money', d: st.money - m }); } }
+    return out;
+  }
+  function merge(a, b) {
+    var map = {}, out = [];
+    a.concat(b).forEach(function (x) { if (map[x.k]) { map[x.k].d += x.d; } else { map[x.k] = { k: x.k, d: x.d }; out.push(map[x.k]); } });
+    return out.filter(function (x) { return x.d !== 0; });
+  }
+  /* V2.1-A: feedback is a short sentence, never a number (numbers only when the option is on) */
+  function traceKeys(deltas, special) {
+    var list = special ? [special] : [];
+    deltas.slice().sort(function (a, b) { return Math.abs(b.d) - Math.abs(a.d); }).forEach(function (x) {
+      if (list.length >= 2) { return; }
+      var key = x.k === 'money' ? (x.d < 0 ? 'tr.money' : null) : (x.k === 'ho' && x.d < 0 ? null : 'tr.' + x.k + (x.d > 0 ? '.up' : '.down'));
+      if (key && list.indexOf(key) < 0) { list.push(key); }
+    });
+    return list;
+  }
+  function word(v) { return v >= 80 ? 0 : v >= 50 ? 1 : v >= 25 ? 2 : v >= 10 ? 3 : 4; }
+
+  /* ===== 5. tunnelling (V2.0 ch.6, ch.139, ch.155) ===== */
+  function room() { return Math.min(st.hun, st.se); }
+  function tunnel(list, force) {
+    var n = force || clamp(2 + Math.floor(room() / 25), 1, 5);
+    list.slice().sort(function (a, b) { return a.tier - b.tier; }).forEach(function (c, i) { c.dim = i >= n; });
+    list.forEach(function (c) { if (c.dim && c.mem) { st.dimmed[c.mem] = true; } if (!c.dim && c.mem && st.dimmed[c.mem]) { c.back = true; } });
+    return list;
+  }
+  function tunnelReact() {
+    st.tn += 1;
+    view.why = 'why.' + (st.tn <= LD.tunnelLines ? st.tn : LD.tunnelLines + 1);
+    root.setAttribute('data-why', String(st.tn));
+    paintWhy();
+  }
+
+  /* ===== 6. art ===== */
+  var W = 1100, H = 500, INK = '#0c0e11', uid = 0;
+  function kit(svg, P) {
+    var defs = s('defs', {}, svg);
+    return {
+      lg: function (id, stops, x2, y2) { var g = s('linearGradient', { id: P + id, x1: 0, y1: 0, x2: x2 || 0, y2: y2 == null ? 1 : y2 }, defs); stops.forEach(function (t) { s('stop', { offset: t[0], 'stop-color': t[1], 'stop-opacity': t[2] == null ? 1 : t[2] }, g); }); },
+      rg: function (id, stops, r, cx, cy) { var g = s('radialGradient', { id: P + id, cx: cx == null ? .5 : cx, cy: cy == null ? .5 : cy, r: r || .5 }, defs); stops.forEach(function (t) { s('stop', { offset: t[0], 'stop-color': t[1], 'stop-opacity': t[2] }, g); }); },
+      defs: defs, u: function (id) { return 'url(#' + P + id + ')'; }
+    };
+  }
+  function grainVig(svg, K, P, vigR) {
+    var f = s('filter', { id: P + 'grain', x: 0, y: 0, width: '100%', height: '100%' }, K.defs);
+    s('feTurbulence', { type: 'fractalNoise', baseFrequency: '.85', numOctaves: '2', seed: '5', stitchTiles: 'stitch' }, f);
+    s('feColorMatrix', { type: 'saturate', values: '0' }, f);
+    K.rg('vig', [[.5, '#000', 0], [1, '#000', .78]], vigR || .78);
+    s('rect', { width: W, height: H, filter: K.u('grain'), opacity: '.08' }, svg);
+    s('rect', { width: W, height: H, fill: K.u('vig') }, svg);
+  }
+  function snowfall(svg, R, count, clip) {
+    var g = s('g', { fill: '#fff', opacity: .7, class: 'snow', 'clip-path': clip || null }, svg);
+    for (var n = 0; n < count; n++) {
+      var c = s('circle', { cx: R() * W, cy: R() * H, r: .8 + R() * 1.4 }, g);
+      if (!still()) { c.style.animation = 'hsdFall ' + (6 + R() * 6) + 's linear ' + (-R() * 8) + 's infinite'; }
+    }
+  }
+  /* a person: ink silhouette; a face exists only as light, and only for someone who answered (V2.0 ch.9) */
+  function person(par, o) {
+    var g = s('g', { transform: 'translate(' + o.x + ',' + o.y + ') scale(' + o.sc + ')' }, par), mv = g;
+    if (o.drift) { mv = s('g', { class: 'drift', style: '--dx:' + o.drift + 'px;--dt:' + (o.dt || 40) + 's' }, g); }
+    if (o.shadow !== false) { s('path', { d: 'M-6,0 L-70,10 L-66,14 L2,4z', fill: '#000', opacity: .28 }, mv); }
+    var b = s('g', o.turn ? { transform: 'scale(-1,1)' } : {}, mv);
+    s('path', { d: (o.walk ? 'M-5,-38 L-11,0 M5,-38 L12,0' : 'M-5,-38 L-6,0 M5,-38 L6,0'), stroke: INK, 'stroke-width': 6, 'stroke-linecap': 'round' }, b);
+    if (o.leg) { s('path', { d: o.walk ? 'M10,-14 L12,0' : 'M6,-14 L6,0', stroke: '#20242a', 'stroke-width': 2.2 }, b); }
+    s('path', { d: o.long ? 'M-17,-26 C-18,-60 -14,-78 -8,-86 L8,-86 C14,-78 18,-60 17,-26z' : 'M-15,-36 C-17,-60 -14,-78 -8,-86 L8,-86 C14,-78 17,-60 15,-36z', fill: INK }, b);
+    s('circle', { cx: 0, cy: -97, r: 10, fill: INK }, b);
+    if (o.bun) { s('circle', { cx: -7, cy: -104, r: 5, fill: INK }, b); }
+    if (o.hood) { s('path', { d: 'M-12,-94 C-12,-112 12,-112 12,-94 L10,-84 L-10,-84z', fill: INK }, b); }
+    if (o.child) {                                                   /* V2.4 B05: the boy's body is fixed data; choices never change it */
+      s('circle', { cx: -10.5, cy: -97, r: 3.6, fill: INK }, b); s('circle', { cx: 10.5, cy: -97, r: 3.6, fill: INK }, b);
+      s('path', { d: 'M1,-106 q2,-10 9,-9', stroke: INK, 'stroke-width': 2.6, fill: 'none', 'stroke-linecap': 'round' }, b);
+    }
+    var arms = { point: 'M6,-78 L26,-106', lower: 'M9,-80 L19,-50', sink: 'M-9,-78 L-32,-64', give: 'M-9,-78 L-36,-66', pull: 'M-8,-74 L-22,-46' };
+    if (arms[o.arm]) { s('path', { d: arms[o.arm], stroke: INK, 'stroke-width': 4.5, 'stroke-linecap': 'round', fill: 'none' }, b); }
+    if (o.arm === 'give') { s('rect', { x: -46, y: -72, width: 12, height: 9, fill: '#8d877b', transform: 'rotate(-12 -40 -68)' }, b); }
+    if (o.crutch) { s('path', { d: 'M-17,-72 L-23,0', stroke: '#16140f', 'stroke-width': 3, 'stroke-linecap': 'round' }, b); }
+    if (o.prop === 'case') { s('rect', { x: 12, y: -52, width: 15, height: 11, rx: 1.5, fill: INK }, b); }
+    if (o.prop === 'broom') { s('path', { d: 'M-14,-70 L-30,0 M-38,-2 l14,4', stroke: INK, 'stroke-width': 3 }, b); }
+    if (o.prop === 'dog') { s('path', { d: 'M22,-2 q2,-16 18,-16 q12,0 14,-8 l4,2 q-2,10 -8,12 l0,10 h-4 l-1,-8 h-14 l-2,8 h-4z', fill: INK }, b); s('path', { d: 'M12,-54 q18,24 22,38', stroke: INK, fill: 'none' }, b); }
+    if (o.breath !== false) { s('path', { class: 'breath', d: 'M11,-99 q6,-4 12,-2', stroke: '#e8e2d6', 'stroke-width': 1.3, fill: 'none', 'stroke-linecap': 'round', style: '--bd:' + (o.bd || 0) + 's' }, b); }
+    if (o.id) {
+      var fg = s('g', { class: 'face' + (o.face ? ' on' : '') + (o.fresh ? ' fresh' : ''), 'data-face': o.id }, b);
+      s('circle', { class: 'halo', cx: 2, cy: -97, r: 17, fill: 'url(#' + o.P + 'halo)' }, fg);
+      s('path', { d: 'M4,-106 a10,10 0 0 1 5,17', stroke: '#ffd9a8', 'stroke-width': 2.1, fill: 'none', opacity: .95 }, fg);
+      s('path', { d: 'M9,-78 C14,-62 16,-50 15,-38', stroke: '#ffd9a8', 'stroke-width': 1.5, fill: 'none', opacity: .7 }, fg);
+      s('circle', { class: 'eye', cx: 5, cy: -98, r: 1.4, fill: '#fff4e0' }, fg);
+    }
+    return g;
+  }
+  /* the hero seated: same ink as everyone, no light of his own (V2.0 ch.134) */
+  function heroSit(par, tx, ty, sc, crutch, indoor) {
+    var g = s('g', { transform: 'translate(' + tx + ',' + ty + ') scale(' + sc + ') translate(-296,-402)', fill: INK }, par);
+    s('path', { d: 'M279,370 C276,356 277,342 285,334 C292,328 304,328 309,336 C314,344 315,358 313,370z' }, g);
+    s('circle', { cx: 303, cy: 328, r: 8.5 }, g);
+    s('path', { d: 'M300,338 L314,352', stroke: INK, 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+    s('path', { d: 'M284,370 L280,402 M310,370 L320,378 L320,402', stroke: INK, 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round' }, g);
+    s('path', { d: 'M320,388 L320,402', stroke: '#20242a', 'stroke-width': 2.2 }, g);
+    if (crutch) { s('path', { d: 'M332,330 L324,404', stroke: '#16140f', 'stroke-width': 3, 'stroke-linecap': 'round' }, g); }
+    if (!indoor) s('path', { class: 'breath', d: 'M311,324 q6,-4 11,-2', stroke: '#e8e2d6', 'stroke-width': 1.3, fill: 'none', 'stroke-linecap': 'round', style: '--bd:1.7s' }, g);
+    return g;
+  }
+  function warmLayer(svg, K, cx, cy) {
+    K.rg('warm', [[0, '#ffc98a', .55], [.55, '#ffb56e', .18], [1, '#ffb56e', 0]], .75, cx, cy);
+    return s('rect', { class: 'warm', width: W, height: H, fill: K.u('warm'), opacity: 0, style: 'mix-blend-mode:soft-light' }, svg);
+  }
+
+  /* --- park: dawn / noon / omen. Hero at the left third, outside the lamp light --- */
+  function parkScene(o) {
+    var R = rng(11), P = 'pk' + (++uid) + '-', noon = o.time === 'noon', omen = o.time === 'omen';
+    var alt = T('alt.park.' + o.time) + (o.paper ? ' ' + T('alt.paper') : '') + (st.faces.length ? ' ' + T('alt.face') : '');
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': alt }), K = kit(svg, P);
+    K.lg('sky', noon ? [[0, '#33415a'], [.5, '#7d8696'], [.85, '#b9b3a8'], [1, '#d8cfbf']] : [[0, '#1f2b44'], [.45, '#6f6378'], [.78, '#d99a74'], [1, '#f0caa0']]);
+    K.lg('mist', [[0, '#f3dcc0', 0], [1, '#f3dcc0', noon ? .3 : .42]]);
+    K.lg('ground', [[0, '#23272e'], [1, '#101216']]);
+    K.lg('streak', [[0, '#f5c796', 0], [.55, '#f5c796', .16], [1, '#f5c796', 0]], 1, 0);
+    K.rg('sun', [[0, '#fff1d0', .95], [.35, '#ffd9a0', .45], [1, '#ffb070', 0]]);
+    K.rg('lamp', [[0, '#ffe6b0', .8], [1, '#ffe6b0', 0]]);
+    K.rg('pool', [[0, '#ffdca0', .35], [1, '#ffdca0', 0]]);
+    K.rg('halo', [[0, '#ffd59a', .7], [1, '#ffd59a', 0]]);
+    var blur = s('filter', { id: P + 'haze' }, K.defs); s('feGaussianBlur', { stdDeviation: '1.6' }, blur);
+    var world = s('g', { class: 'scene' }, svg);
+    s('rect', { width: W, height: H, fill: K.u('sky') }, world);
+    if (omen) { s('rect', { width: W, height: 360, fill: '#0a0d16', opacity: .3 }, world); }   /* the omen: one shade heavier */
+    s('circle', { cx: noon ? 860 : 790, cy: noon ? 150 : 318, r: noon ? 110 : 150, fill: K.u('sun'), opacity: omen ? .5 : noon ? .75 : 1 }, world);
+    var city = s('g', {}, world), x = -10, lit = noon ? .04 : omen ? .11 : .16, Rc = rng(31);   /* other people's warm homes: same windows every time, fewer lit by day */
+    while (x < W) {
+      var w = 26 + Rc() * 58, h = 70 + Rc() * 150, top = 338 - h;
+      s('rect', { x: x, y: top, width: w, height: h + 30, fill: '#434857', opacity: .62 }, city);
+      for (var wy = top + 8; wy < 330; wy += 11) { for (var wx = x + 5; wx < x + w - 5; wx += 9) { if (Rc() < lit) { s('rect', { x: wx, y: wy, width: 3.2, height: 4.2, fill: '#ffcf7a', opacity: .85 }, city); } } }
+      x += w + 3;
+    }
+    /* V2.4 B10: same branches and same random order as V2.2, but one path per depth instead of ~6,800 line elements */
+    function tree(bk, x0, y0, len, ang, depth, width) {
+      if (depth === 0 || len < 3) { return; }
+      var x1 = x0 + Math.cos(ang) * len, y1 = y0 - Math.sin(ang) * len;
+      (bk[depth] = bk[depth] || { w: width, d: [] }).d.push('M' + x0.toFixed(1) + ' ' + y0.toFixed(1) + 'L' + x1.toFixed(1) + ' ' + y1.toFixed(1));
+      var n = depth > 5 ? 2 : (R() < .6 ? 2 : 3);
+      for (var i = 0; i < n; i++) { tree(bk, x1, y1, len * (.66 + R() * .14), ang + (R() - .5) * 1.1 + (i - (n - 1) / 2) * .42, depth - 1, width * .68); }
+    }
+    [[.34, '#59606e', 52, 7], [.62, '#343944', 70, 8], [1, '#1a1d23', 96, 9]].forEach(function (layer, li) {
+      var g = s('g', { stroke: layer[1], opacity: layer[0] < 1 ? .9 : 1, fill: 'none', 'stroke-linecap': 'round' }, world), count = li === 2 ? 3 : 6, bk = {};
+      for (var i = 0; i < count; i++) { var tx = li === 2 ? [40, 1000, 1080][i] : (i + .5) * (W / count) + (R() - .5) * 90; tree(bk, tx, 398 + li * 2, layer[2] * (.75 + R() * .5), Math.PI / 2 + (R() - .5) * .15, layer[3], 5 + li * 3); }
+      Object.keys(bk).forEach(function (k) { s('path', { d: bk[k].d.join(''), 'stroke-width': bk[k].w.toFixed(2) }, g); });
+    });
+    s('rect', { x: 0, y: 290, width: W, height: 150, fill: K.u('mist') }, world);
+    s('path', { d: 'M0,398 C300,388 800,390 1100,396 L1100,500 L0,500Z', fill: K.u('ground') }, world);
+    var sd = o.snow || 0;                                                          /* snow that stays: the days pile up */
+    if (sd) { s('path', { d: 'M0,399 C300,389 800,391 1100,397 L1100,' + (402 + sd * 3) + ' C800,' + (396 + sd * 3) + ' 300,' + (394 + sd * 3) + ' 0,' + (404 + sd * 3) + 'Z', fill: '#dfe3e8', opacity: .1 + sd * .05 }, world); }
+    if (!noon) { s('ellipse', { cx: 520, cy: 432, rx: 110, ry: 12, fill: K.u('pool') }, world); s('rect', { x: 560, y: 414, width: 540, height: 26, fill: K.u('streak') }, world); s('circle', { cx: 520, cy: 244, r: 105, fill: K.u('lamp') }, world); }
+    s('path', { d: 'M517,246 h6 v156 h-6z M506,246 h28 l-5,-13 h-18z', fill: '#0e1013' }, world);
+    var faced = st.faces.indexOf('P01') >= 0;
+    var p01 = { pass1: { x: 560, y: 404, walk: true, drift: 240, dt: 30 }, near: { x: 530, y: 406, walk: true, drift: -55, dt: 9 }, turn: { x: 475, y: 406, turn: true }, leave: { x: 475, y: 406, walk: true, drift: 420, dt: 24 }, guard: { x: 640, y: 405, walk: true, turn: true, drift: -170, dt: 26 } }[o.p01];
+    if (p01) { p01.sc = 1; p01.prop = 'case'; p01.id = 'P01'; p01.P = P; p01.face = faced && o.p01 !== 'pass1'; p01.fresh = o.fresh === 'P01'; p01.bd = .4; person(world, p01); }
+    if (noon) {
+      person(world, { x: 860, y: 394, sc: .82, walk: true, prop: 'dog', id: 'P06', P: P, drift: 70, dt: 30, bd: 2.1 });
+      person(world, { x: 1000, y: 399, sc: .62, walk: true, id: 'P16', P: P, bd: 3.3 });
+    } else if (omen) {
+      person(world, { x: 870, y: 401, sc: .92, hood: true, bd: 1.2 }); person(world, { x: 922, y: 395, sc: .84, hood: true, bd: 2.8 });
+      person(world, { x: 1040, y: 411, sc: 1.02, walk: true, prop: 'broom', id: 'P07', P: P, bd: 3.9 });
+    } else {
+      person(world, { x: 772, y: 392, sc: .78, prop: 'dog', id: 'P06', P: P, bd: 2.2 });
+      person(world, { x: 935, y: 410, sc: 1.08, walk: true, prop: 'broom', id: 'P07', P: P, bd: 3.1 });
+      person(world, { x: 1030, y: 396, sc: .6, walk: true, id: 'P16', P: P, bd: 1.5 });
+    }
+    var bch = s('g', { fill: INK }, world);
+    s('path', { d: 'M120,368 h190 v7 h-190z M122,348 h186 v6 h-186z M132,375 h6 v28 h-6z M294,375 h6 v28 h-6z' }, bch);
+    s('path', { d: 'M150,348 q-5,-15 7,-18 l13,0 q7,3 3,18z' }, bch);
+    if (sd) { s('rect', { x: 180, y: 346 - sd * 1.2, width: 92, height: 2 + sd * 1.2, rx: 1, fill: '#dfe3e8', opacity: .32 }, world); }   /* snow only where nobody sits */
+    if (o.paper) { s('rect', { x: 176, y: 337, width: 12, height: 10, fill: '#8f887b', transform: 'rotate(-10 182 342)' }, world); }
+    heroSit(world, 296, 402, 1, true);
+    var hue = s('g', { class: 'hue' }, svg);                                       /* colour protagonist: wild flowers in the snow */
+    for (var k = 0; k < 6; k++) { var fx = 400 + k * 8 + R() * 5, fy = 404 + R() * 5; s('path', { d: 'M' + fx + ',' + (fy + 10) + ' l0,-10', stroke: '#56713f', 'stroke-width': 1.4 }, hue); s('circle', { cx: fx, cy: fy, r: 2.6, fill: '#f2c14e' }, hue); }
+    warmLayer(svg, K, noon ? .78 : .7, noon ? .3 : .62);
+    snowfall(svg, R, omen ? 55 : 40);
+    grainVig(svg, K, P);
+    return svg;
+  }
+
+  /* --- meal center: queue (name scene) and seat (thoughts return). The bowl is the colour protagonist --- */
+  function kitchenScene(o) {
+    var P = 'kt' + (++uid) + '-', seat = o.pose === 'seat';
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': T(seat ? 'alt.kitchen.seat' : 'alt.kitchen') }), K = kit(svg, P);
+    K.lg('wall', [[0, '#4a4038'], [1, '#2a241f']]);
+    K.rg('glow', [[0, '#ffd59a', .55], [1, '#ffd59a', 0]]);
+    var world = s('g', { class: 'scene' }, svg);
+    s('rect', { width: W, height: H, fill: K.u('wall') }, world);
+    for (var i = 0; i < 4; i++) { s('rect', { x: 120 + i * 230, y: 60, width: 150, height: 120, fill: '#7d7466', opacity: .35, rx: 4 }, world); s('path', { d: 'M' + (195 + i * 230) + ',60 v120 M' + (120 + i * 230) + ',120 h150', stroke: '#2a241f', 'stroke-width': 4 }, world); }
+    s('circle', { cx: 640, cy: 150, r: 170, fill: K.u('glow') }, world);
+    s('path', { d: 'M560,40 v40 M520,80 h80 l-12,22 h-56z', fill: '#1b1714', stroke: '#1b1714', 'stroke-width': 3 }, world);
+    var v = s('g', { fill: INK }, world);                                          /* volunteer behind the counter */
+    if (!seat) {
+      s('path', { d: 'M610,330 C606,290 612,262 626,252 L660,252 C674,262 680,290 676,330z' }, v); s('circle', { cx: 643, cy: 234, r: 15 }, v);
+      var arm = s('g', { class: 'arm' }, v);
+      s('path', { d: 'M672,280 L708,300 M708,300 l6,26', stroke: INK, 'stroke-width': 5, 'stroke-linecap': 'round', fill: 'none' }, arm);
+    }
+    s('path', { d: 'M0,330 H1100 V352 H0z', fill: '#1a1612' }, world);
+    s('path', { d: 'M0,352 H1100 V430 H0z', fill: '#2e2620' }, world);
+    s('path', { d: 'M0,430 H1100 V500 H0z', fill: '#1e1a16' }, world);
+    var bowlX = 540, bowlY = 330;
+    if (!seat) {
+      [[150, 1.22], [262, 1.18], [374, 1.22], [470, 1.2]].forEach(function (pp, k) {   /* the line: the hero is in it, same ink */
+        person(world, { x: pp[0], y: 486, sc: pp[1], leg: k === 3, crutch: k === 3, breath: false, shadow: false });
+      });
+      s('rect', { x: 760, y: 300, width: 140, height: 30, rx: 6, fill: '#26211d' }, world);
+    } else {
+      person(world, { x: 900, y: 488, sc: 1.1, shadow: false, breath: false });               /* someone leaving with a tray */
+      s('path', { d: 'M268,404 h170 v8 h-170z M284,412 h6 v70 h-6z M416,412 h6 v70 h-6z', fill: '#1d1915' }, world);   /* side table */
+      heroSit(world, 236, 486, 1.25, true, true);
+      person(world, { x: 476, y: 488, sc: 1.2, arm: 'give', long: true, shadow: false, breath: false });   /* she hands over the flyer */
+      bowlX = 330; bowlY = 406;
+    }
+    var bk = seat ? .6 : 1, bowlT = 'translate(' + bowlX + ',' + bowlY + ') scale(' + bk + ')';
+    var hue = s('g', { class: 'hue' }, svg), bw = s('g', { transform: bowlT }, hue);
+    s('ellipse', { cx: 0, cy: 0, rx: 46, ry: 8, fill: '#000', opacity: .35 }, bw);
+    s('path', { d: 'M-46,-24 h92 c-4,22 -22,30 -46,30 c-24,0 -42,-8 -46,-30z', fill: '#e8863e' }, bw);
+    s('ellipse', { cx: 0, cy: -24, rx: 46, ry: 7, fill: '#f6c27a' }, bw);
+    var steam = s('g', { class: 'steam', stroke: '#fff4e6', 'stroke-width': 2, fill: 'none', 'stroke-linecap': 'round', opacity: .5 }, s('g', { transform: bowlT }, svg));
+    [-20, 0, 20].forEach(function (dx, k) { var p = s('path', { d: 'M' + dx + ',-34 c-8,-14 8,-22 0,-36 c-6,-10 4,-18 0,-26' }, steam); p.style.animationDelay = (k * .6) + 's'; });
+    warmLayer(svg, K, .58, .3);
+    K.rg('vig', [[.55, '#000', 0], [1, '#000', .75]], .8);
+    s('rect', { width: W, height: H, fill: K.u('vig') }, svg);
+    return svg;
+  }
+
+  /* --- Sunshine House: the boy does not know him. The blue swing is the colour protagonist --- */
+  function houseScene(o) {
+    var R = rng(23), P = 'hs' + (++uid) + '-', pose = o.pose;
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': T('alt.house') }), K = kit(svg, P);
+    K.lg('wall', [[0, '#55493f'], [1, '#2e2722']]);
+    K.lg('out', [[0, '#b9c3cf'], [1, '#e6e2da']]);
+    K.lg('spill', [[0, '#fff1d6', .12], [1, '#fff1d6', 0]], 0, 1);
+    var clip = s('clipPath', { id: P + 'win' }, K.defs); s('rect', { x: 650, y: 70, width: 390, height: 240 }, clip);
+    var world = s('g', { class: 'scene' }, svg);
+    s('rect', { width: W, height: H, fill: K.u('wall') }, world);
+    s('rect', { x: 0, y: 330, width: W, height: 14, fill: '#2a231e' }, world);
+    s('path', { d: 'M0,436 H1100 V500 H0z', fill: '#1c1916' }, world);
+    s('path', { d: 'M60,110 h110 v326 h-110z', fill: '#3a3029' }, world); s('path', { d: 'M60,110 h110 v326 h-110z', stroke: '#241e1a', 'stroke-width': 5, fill: 'none' }, world);              /* outer door */
+    s('path', { d: 'M470,150 h84 v286 h-84z', fill: '#40362e' }, world); s('path', { d: 'M470,150 h84 v286 h-84z', stroke: '#241e1a', 'stroke-width': 5, fill: 'none' }, world);              /* inner door */
+    s('path', { d: 'M566,430 q6,-6 14,0 v4 h-14z M584,430 q6,-6 14,0 v4 h-14z', fill: INK }, world);   /* the small shoes */
+    s('path', { d: 'M290,300 h50 l-6,14 h-38z M314,286 v14', fill: '#3a332d', stroke: '#3a332d', 'stroke-width': 3 }, world);   /* sink */
+    s('rect', { x: 650, y: 70, width: 390, height: 240, fill: K.u('out') }, world);
+    var yard = s('g', { 'clip-path': 'url(#' + P + 'win)' }, world);
+    s('path', { d: 'M650,250 C760,240 900,244 1040,236 V310 H650z', fill: '#dfe2e6' }, yard);
+    s('path', { d: 'M760,250 L790,130 L930,130 L960,250 M790,130 h140', stroke: '#2b2f36', 'stroke-width': 5, fill: 'none' }, yard);
+    s('path', { d: 'M820,130 v88 M846,130 v88 M812,218 h42', stroke: '#2b2f36', 'stroke-width': 2.5 }, yard);   /* the plain swing */
+    s('path', { d: 'M650,446 L1040,446 L1100,500 L590,500z', fill: K.u('spill') }, world);   /* window light on the floor */
+    s('path', { d: 'M650,70 h390 v240 h-390z M845,70 v240 M650,190 h390', stroke: '#2a241f', 'stroke-width': 7, fill: 'none' }, world);
+    var pos = {
+      door: { h: 220, d: 410, c: null }, meet: { h: 490, d: 690, c: 612 }, swing: { h: 616, d: 460, c: 712 }, seat: { h: 470, d: 700, c: 590 }
+    }[pose] || { h: 490, d: 690, c: 612 };
+    if (pose === 'seat') {
+      s('path', { d: 'M440,404 h56 v6 h-56z M444,410 v34 M492,410 v34 M520,410 h52 v6 h-52z M524,416 v28 M568,416 v28', stroke: '#18140f', fill: '#18140f', 'stroke-width': 4 }, world);
+      heroSit(world, pos.h - 4, 446, 1.35, true, true);
+    } else {
+      person(world, { x: pos.h, y: 444, sc: 1.45, leg: true, crutch: true, arm: pose === 'meet' ? 'lower' : null, breath: false, shadow: false });
+    }
+    person(world, { x: pos.d, y: 444, sc: 1.42, long: true, bun: true, arm: pose === 'door' ? 'sink' : null, breath: false, shadow: false });
+    if (pos.c) { person(world, { x: pos.c, y: 444, sc: .84, child: true, arm: pose === 'swing' ? 'point' : pose === 'seat' ? 'pull' : null, turn: pose === 'meet', breath: false, shadow: false }); }
+    var hue = s('g', { class: 'hue', 'clip-path': 'url(#' + P + 'win)' }, svg);   /* the blue swing */
+    var sw = s('g', { class: pose === 'swing' && !still() ? 'sway' : null }, hue);
+    s('path', { d: 'M896,130 v88 M922,130 v88', stroke: '#7fb6dc', 'stroke-width': 2.5 }, sw);
+    s('rect', { x: 888, y: 216, width: 42, height: 7, rx: 2, fill: '#4f9fd8' }, sw);
+    warmLayer(svg, K, .3, .2);
+    snowfall(svg, R, 26, 'url(#' + P + 'win)');
+    grainVig(svg, K, P, .82);
+    return svg;
+  }
+
+  /* the drawing on the back of a flyer: the detail the player chose is drawn last */
+  function drawingCard(detail, live) {
+    var c = el('div', 'card' + (live && !still() ? ' live' : '')); c.setAttribute('aria-hidden', 'true');
+    var svg = s('svg', { viewBox: '0 0 200 250' }, c);
+    s('path', { d: 'M100,58 c-42,0 -56,36 -52,70 c4,36 28,58 52,58 c24,0 48,-22 52,-58 c4,-34 -10,-70 -52,-70z' }, svg);
+    s('path', { d: 'M78,116 q6,-5 12,0 M110,116 q6,-5 12,0 M84,152 q16,12 32,0 M70,70 c14,-14 46,-18 66,-2' }, svg);
+    if (detail === 'd1') { s('path', { class: 'late', d: 'M48,112 c-20,-6 -24,32 -2,36 M152,112 c20,-6 24,32 2,36' }, svg); }
+    else { s('path', { d: 'M50,122 c-8,-2 -10,14 -1,16 M150,122 c8,-2 10,14 1,16' }, svg); }
+    if (detail === 'd2') { s('path', { class: 'late', d: 'M98,58 q2,-20 18,-17 M102,58 q-8,-16 6,-26' }, svg); }
+    if (detail === 'd3') { s('path', { class: 'late', d: 'M130,146 q5,4 1,9' }, svg); }
+    return c;
+  }
+
+  /* ===== 7. painting ===== */
+  var stage, bloom, barEls = {}, coinEl, slugEl, daysEl, textBox, whyBox, choiceBox;
+  var FRAMES = { 'park': '120 110 540 390', 'kitchen.queue': '380 140 480 360', 'kitchen.seat': '110 150 480 360', 'house.door': '110 100 520 390', 'house.meet': '330 100 520 390', 'house.swing': '430 80 560 420', 'house.seat': '330 110 520 390' };
+  function narrow() { return opt.vertical || mqNarrow.matches; }
+  function satFor(ho, kind) { return clamp(ho / 100 + (kind === 'house' ? LD.sonBoost : 0), LD.satMin, 1); }
+  function applyHope(svg, ho, kind) {
+    var sat = satFor(ho, kind), tier = ho > 70 ? 3 : ho > 30 ? 2 : 1;
+    if (stage) { stage.setAttribute('data-tier', String(tier)); }
+    svg.querySelectorAll('.scene').forEach(function (g) { g.style.filter = 'grayscale(' + (1 - sat).toFixed(3) + ') contrast(1.05)'; });
+    svg.querySelectorAll('.hue').forEach(function (g) { g.style.filter = 'grayscale(' + (1 - Math.min(1, sat * LD.hueGain)).toFixed(3) + ')'; });
+    svg.querySelectorAll('.warm').forEach(function (r) { r.style.opacity = tier === 1 ? '0' : tier === 2 ? (.25 + (ho - 30) / 40 * .5).toFixed(2) : '.85'; });
+  }
+  function paintScene(force) {
+    var sc = view.scene, key = JSON.stringify(sc) + '|' + st.faces.join(',') + '|' + lang + '|' + narrow() + '|' + still();
+    var cur = stage.querySelector('svg');
+    if (!force && cur && key === sceneKey) { applyHope(cur, st.ho, sc.kind); shownHo = st.ho; syncCard(); return; }
+    sceneKey = key;
+    var svg = sc.kind === 'park' ? parkScene(sc) : sc.kind === 'kitchen' ? kitchenScene(sc) : houseScene(sc);
+    var fk = sc.kind === 'park' ? 'park' : sc.kind + '.' + sc.pose;
+    if (narrow() && FRAMES[fk]) { svg.setAttribute('viewBox', FRAMES[fk]); svg.setAttribute('preserveAspectRatio', 'xMidYMid slice'); }
+    var from = force ? st.ho : (shownHo == null ? st.ho : shownHo);
+    applyHope(svg, from, cur && !force ? (stage.getAttribute('data-scene') || sc.kind) : sc.kind);
+    if (cur) { stage.replaceChild(svg, cur); } else { stage.insertBefore(svg, stage.firstChild); }
+    stage.setAttribute('data-scene', sc.kind);
+    shownHo = st.ho;
+    if (still() || force) { applyHope(svg, st.ho, sc.kind); }
+    else { requestAnimationFrame(function () { requestAnimationFrame(function () { if (svg.isConnected) { applyHope(svg, st.ho, sc.kind); } }); }); }
+    syncCard();
+  }
+  function syncCard() {
+    var old = stage.querySelector('.card');
+    if (!view.card) { if (old) { stage.removeChild(old); } return; }
+    var key = view.card.d + (view.card.mini ? '-mini' : '');
+    if (old && old.getAttribute('data-d') === key) { return; }
+    if (old) { stage.removeChild(old); }
+    var c = drawingCard(view.card.d, view.card.live); c.setAttribute('data-d', key); view.card.live = false;
+    if (view.card.mini) { c.classList.add('mini'); }
+    stage.appendChild(c); requestAnimationFrame(function () { c.classList.add('on'); });
+  }
+  function fx(kind) {
+    var svg = stage && stage.querySelector('svg'); if (!svg || still()) { return; }
+    if (kind === 'push') { svg.style.setProperty('--fx', '52%'); svg.style.setProperty('--fy', '58%'); svg.classList.add('push'); }
+    if (kind === 'ladle') { var a = svg.querySelector('.arm'); if (a) { a.classList.add('ladle'); } }
+    if (kind === 'bloom') { bloom.classList.remove('go'); void bloom.offsetWidth; bloom.classList.add('go'); fxLater(2700, function () { bloom.classList.remove('go'); }); }
+  }
+  function para(p, lc) { var keys = [].concat(p.k); return keys.map(function (k) { return Tl(lc, k); }).join(' '); }
+  function addText(box, tag, cls, keyFn) {
+    var n = el(tag, cls, keyFn(lang));
+    if (opt.dual && other() !== lang) { var sb = el('span', 'sub', keyFn(other())); sb.setAttribute('lang', other()); n.appendChild(sb); }
+    box.appendChild(n); return n;
+  }
+  function updateStatus() {
+    ['hun', 'se', 'ho'].forEach(function (k) {
+      var r = barEls[k], v = st[k], prev = parseFloat(r.b.getAttribute('data-v') || v);
+      r.lab.textContent = T('bar.' + k); r.em.textContent = T('st.' + k + '.' + word(v)) + (opt.num ? ' ' + Math.round(v) : '');
+      r.b.style.width = v + '%'; r.b.setAttribute('data-v', String(v));
+      r.wrap.classList.toggle('up', v > prev); fxLater(1600, function () { r.wrap.classList.remove('up'); });
+    });
+    coinEl.textContent = ''; coinEl.appendChild(document.createTextNode(T('coins') + ' '));
+    for (var i = 0; i < Math.max(st.money, LD.start.money); i++) { coinEl.appendChild(el('span', i < st.money ? '' : 'gone', '●')); }
+    coinEl.setAttribute('aria-label', T('coins') + ': ' + st.money);
+  }
+  function paintWhy() {
+    whyBox.textContent = ''; whyBox.classList.remove('hint');
+    if (view.why) { addText(whyBox, 'span', null, function (lc) { return Tl(lc, view.why); }); }
+  }
+  function paintPanel() {
+    updateStatus();
+    slugEl.textContent = T(view.when);
+    daysEl.textContent = '';
+    for (var d = 1; d <= 30; d++) { daysEl.appendChild(el('span', d < view.day ? 'past' : d === view.day ? 'now' : '')); }
+    daysEl.setAttribute('aria-label', T('ui.day').replace('{n}', String(view.day))); daysEl.setAttribute('role', 'img');
+    textBox.textContent = '';
+    view.paras.forEach(function (p) { addText(textBox, 'p', p.c || null, function (lc) { return para(p, lc); }); });
+    if (view.traces) {
+      var nums = view.traces.deltas.filter(function (x) { return x.k !== 'money'; }).map(function (x) { return T('bar.' + x.k) + ' ' + (x.d > 0 ? '+' : '') + Math.round(x.d); }).join(', ');
+      view.traces.keys.forEach(function (k, i) { var t = addText(textBox, 'p', 'trace', function (lc) { return Tl(lc, k); }); if (opt.num && i === 0 && nums) { t.appendChild(el('small', null, nums)); } });
+    }
+    paintWhy();
+    choiceBox.textContent = '';
+    var n = 0, first = null;
+    view.choices.forEach(function (c) {
+      if (!c.cont) { n += 1; }
+      var b = el('button', 'ch' + (c.dim ? ' dim' : '') + (c.back && !c.backDone && !still() ? ' back' : '')); b.type = 'button';
+      b.setAttribute('data-id', c.id); b.setAttribute('data-n', c.cont ? '0' : String(n));
+      b.appendChild(el('span', 'k', c.cont ? '›' : String(n)));
+      var t = el('span', 't', T(c.k)); b.appendChild(t);
+      if (opt.dual && !c.cont && other() !== lang) { var sb = el('span', 'sub', Tl(other(), c.k)); sb.setAttribute('lang', other()); t.appendChild(sb); }
+      if (c.dim) {
+        /* TN-11: the label stays the choice text; the limit is read from a separate description */
+        b.setAttribute('aria-disabled', 'true'); b.setAttribute('aria-describedby', 'hsd-cant hsd-why');
+        ACT.set(b, tunnelReact); b.addEventListener('click', function () { activate(b, 'user'); });
+        hintable(b);                                                   /* TN-10: focus, hover, long press show the reason */
+      } else {
+        ACT.set(b, function () { if (locked) { return; } locked = true; c.act(); });
+        b.addEventListener('click', function () { activate(b, 'user'); });
+        if (!first) { first = b; }
+      }
+      choiceBox.appendChild(b);
+    });
+    view.choices.forEach(function (c) { if (c.back) { c.backDone = true; } });
+    if (kbd && first) { first.focus({ preventScroll: true }); }
+  }
+  function show() {
+    if (mode !== 'play' || !stage || !stage.isConnected) { mode = 'play'; paintAll(); }
+    else { paintScene(false); paintPanel(); }
+    locked = false; keepFocusInside();
+  }
+
+  /* ===== 8. shell, title, question, ending ===== */
+  function topBar(label) {
+    var top = el('div', 'top'); top.appendChild(el('b', null, label));
+    var tools = el('div', 'tools');
+    CODES.forEach(function (code) {
+      var b = el('button', 'pill', PACKS[code].name); b.type = 'button'; b.setAttribute('aria-pressed', String(code === lang)); b.setAttribute('lang', code); b.setAttribute('data-fid', 'lang-' + code);
+      b.addEventListener('click', function () { if (lang !== code) { lang = code; paintAll(); } }); tools.appendChild(b);
+    });
+    var det = el('details', 'opts'), sum = el('summary', null, T('ui.opts')); sum.setAttribute('data-fid', 'opts'); det.appendChild(sum);
+    var box = el('div', 'optbox');
+    [['motion', 'ui.motion'], ['blur', 'ui.blur'], ['num', 'ui.num'], ['dual', 'ui.dual']].forEach(function (o) {
+      var b = el('button', 'pill', T(o[1])); b.type = 'button'; b.setAttribute('aria-pressed', String(!!opt[o[0]])); b.setAttribute('data-fid', 'opt-' + o[0]);
+      b.addEventListener('click', function () { opt[o[0]] = !opt[o[0]]; optsOpen = true; paintAll(); });
+      box.appendChild(b);
+    });
+    if (optsOpen) { det.open = true; }
+    det.appendChild(box); tools.appendChild(det); top.appendChild(tools);
+    return top;
+  }
+  function credit() { return el('div', 'foot', '© 2026 Morgan J. Written and directed by Morgan J. Code: Apache-2.0'); }
+  var optsOpen = false;
+  root.setAttribute('tabindex', '-1');                              /* the demo box itself can hold focus, so number keys keep working */
+  function keepFocusInside() { var a = document.activeElement; if ((auto.on || kbd) && (!a || a === document.body || !a.isConnected)) { root.focus({ preventScroll: true }); } }
+  /* V2.4 B08: remember what had focus by meaning, and give focus back after a repaint */
+  function focusKey() {
+    var a = document.activeElement; if (!a || !root.contains(a)) { return null; }
+    return a.getAttribute('data-fid') ? 'f:' + a.getAttribute('data-fid') : a.getAttribute('data-id') ? 'i:' + a.getAttribute('data-id') : a.id ? '#' + a.id : 'any';
+  }
+  function restoreFocus(k) {
+    if (!k) { return; }
+    var t = k.indexOf('f:') === 0 ? root.querySelector('[data-fid="' + k.slice(2) + '"]') : k.indexOf('i:') === 0 ? root.querySelector('[data-id="' + k.slice(2) + '"]') : k.charAt(0) === '#' ? document.getElementById(k.slice(1)) : null;
+    if (!t) { t = root.querySelector('.choices .ch:not(.dim), .row .btn, #hsd-note'); }
+    if (t) { t.focus({ preventScroll: true }); }
+  }
+  function btn(id, cls, key, fn) { var b = el('button', 'btn' + (cls ? ' ' + cls : ''), T(key)); b.type = 'button'; b.setAttribute('data-id', id); ACT.set(b, fn); b.addEventListener('click', function () { activate(b, 'user'); }); return b; }
+  function paintAll() {
+    stopFx(); var fk = focusKey();
+    root.textContent = ''; root.setAttribute('lang', lang); root.setAttribute('data-mode', mode);
+    root.setAttribute('data-still', still() ? '1' : '0'); root.setAttribute('data-blurless', opt.blur ? '1' : '0'); root.setAttribute('data-vertical', opt.vertical ? '1' : '0'); root.setAttribute('data-wide', rec && !opt.vertical ? '1' : '0'); root.setAttribute('data-sub', opt.dual ? '1' : '0');
+    stage = null;
+    root.setAttribute('data-rec', rec ? '1' : '0');
+    if (mode === 'title') { titleView(); } else if (mode === 'ask') { askView(); } else if (mode === 'end') { endView(); } else { playView(); }
+    root.appendChild(credit());
+    optsOpen = false;
+    if (auto.on) { if (fk) { root.focus({ preventScroll: true }); } else if (rec) { root.focus({ preventScroll: true }); } } else { restoreFocus(fk); keepFocusInside(); }
+  }
+  function playView() {
+    root.appendChild(topBar(T('top')));
+    stage = el('div', 'stage'); root.appendChild(stage);
+    bloom = el('div', 'bloom'); stage.appendChild(bloom);
+    if (auto.on && !rec) { stage.appendChild(autoBar()); }
+    var panel = el('div', 'panel'); root.appendChild(panel);
+    var status = el('div', 'status');
+    ['hun', 'se', 'ho'].forEach(function (k) {
+      var wrap = el('div', 'bar'), lab = el('span'), em = el('em'), i = el('i'), b = el('b');
+      wrap.appendChild(lab); wrap.appendChild(em); i.appendChild(b); wrap.appendChild(i); status.appendChild(wrap);
+      b.setAttribute('data-v', String(st[k])); barEls[k] = { wrap: wrap, lab: lab, em: em, b: b };
+    });
+    coinEl = el('div', 'coins'); status.appendChild(coinEl); panel.appendChild(status);
+    var when = el('div', 'when'); slugEl = el('span', 'slug'); daysEl = el('span', 'days'); when.appendChild(slugEl); when.appendChild(daysEl); panel.appendChild(when);
+    textBox = el('div', 'text'); textBox.setAttribute('aria-live', 'polite'); panel.appendChild(textBox);
+    var cant = el('span', 'sr', T('ui.cant')); cant.id = 'hsd-cant'; panel.appendChild(cant);
+    whyBox = el('div', 'why'); whyBox.id = 'hsd-why'; whyBox.setAttribute('aria-live', 'polite'); panel.appendChild(whyBox);
+    choiceBox = el('div', 'choices'); panel.appendChild(choiceBox);
+    sceneKey = ''; paintScene(true); paintPanel();
+  }
+  function titleView() {
+    root.appendChild(topBar(''));
+    var t = el('div', 'title');
+    t.appendChild(el('h1', null, 'Homeless Survivor')); t.appendChild(el('div', 'ko', '홈리스 서바이버'));
+    t.appendChild(el('div', 'form', T('t.form')));
+    t.appendChild(el('p', 'tag', Tl('en', 't.tag'))); if (PACKS.ko) { t.appendChild(el('p', 'tagk', Tl('ko', 't.tag'))); }
+    t.appendChild(el('p', 'by', T('t.by')));
+    var row = el('div', 'row');
+    row.appendChild(btn('t.watch', null, 't.watch', startAuto));
+    row.appendChild(btn('t.play', 'pri', 't.play', function () { mode = 'ask'; paintAll(); }));
+    t.appendChild(row); t.appendChild(el('p', 'note', T('t.note')));
+    var sc1 = el('p', 'selfc', Tl('en', 'ui.selfContained')); sc1.setAttribute('lang', 'en'); t.appendChild(sc1);     /* ch.185: EN above, KO below */
+    if (PACKS.ko) { var sc2 = el('p', 'selfc', Tl('ko', 'ui.selfContained')); sc2.setAttribute('lang', 'ko'); t.appendChild(sc2); }
+    root.appendChild(t);
+  }
+  /* V2.4 B03: ten characters as the eye counts them (grapheme clusters); code points only where Intl.Segmenter is missing */
+  var SEG = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+  function graphemes(v) { return SEG ? Array.from(SEG.segment(v), function (x) { return x.segment; }) : Array.from(v); }
+  function cleanNote(v) { return graphemes(String(v || '').replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, '')).slice(0, 10).join('').trim(); }
+  function askView() {
+    root.appendChild(topBar(''));
+    var a = el('div', 'ask'), id = 'hsd-note';
+    a.appendChild(el('p', null, T('q.ask')));
+    var lab = el('label', 'sr', T('q.label')); lab.setAttribute('for', id); a.appendChild(lab);
+    var inp = el('input'); inp.id = id; inp.type = 'text'; inp.autocomplete = 'off'; inp.spellcheck = false; inp.value = st.note;
+    var composing = false;
+    inp.addEventListener('compositionstart', function () { composing = true; });
+    inp.addEventListener('compositionend', function () { composing = false; inp.value = cleanNote(inp.value); st.note = inp.value; });
+    inp.addEventListener('input', function (e) { if (!composing && !e.isComposing) { var c = cleanNote(inp.value); if (graphemes(inp.value.trim()).length > 10) { inp.value = c; } st.note = c; } });
+    function begin() { st.note = cleanNote(inp.value); beat1(); }
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !composing && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); begin(); } });
+    a.appendChild(inp); a.appendChild(el('small', null, T('q.hint')));
+    var row = el('div', 'row');
+    row.appendChild(btn('q.skip', null, 'q.skip', function () { st.note = ''; beat1(); }));
+    row.appendChild(btn('q.go', null, 'q.go', begin));
+    a.appendChild(row); root.appendChild(a);
+    if (!auto.on && inp.isConnected) { inp.focus({ preventScroll: true }); }
+  }
+  function endView() {
+    root.appendChild(topBar(T('top')));
+    var t = el('div', 'title'), pth = st.path;
+    t.appendChild(el('p', 'tag', T('end.h')));
+    var ul = el('ul', 'recap'), lines = [];
+    lines.push(pth.morning === 'trash' ? 'rc.trash' : 'rc.walk');
+    lines.push(pth.meal === 'name' ? 'rc.name' : 'rc.head');
+    lines.push(pth.draw && pth.draw !== 'rest' ? 'rc.' + pth.draw : 'rc.rest');
+    lines.push(pth.greet ? 'rc.greet' : 'rc.down');
+    lines.push(pth.visit === 'seat' ? 'rc.seat' : 'rc.swing');
+    lines.push(pth.omen === 'guard' ? 'rc.guard' : 'rc.robbed');
+    lines.forEach(function (k, i) { var li = addText(ul, 'li', null, function (lc) { return Tl(lc, k); }); if (!still()) { li.style.animation = 'hsdBack 1.2s ease ' + (i * .7) + 's both'; } });
+    t.appendChild(ul);
+    if (st.note) { t.appendChild(el('p', 'quote', T('end.note'))); }
+    var nv = el('div', 'nextv'); nv.appendChild(el('p', 'nvl', T('nv.label')));
+    addText(nv, 'p', 'nvt', function (lc) { return Tl(lc, pth.visit === 'seat' ? 'nv.seat' : 'nv.swing'); }); t.appendChild(nv);
+    t.appendChild(el('p', 'rules', T('end.rules')));
+    t.appendChild(el('p', 'tagk', T('end.day'))); t.appendChild(el('p', 'tagk', T('end.other')));
+    var h = el('h1', null, 'Homeless Survivor'); h.style.marginTop = '18px'; t.appendChild(h); t.appendChild(el('div', 'ko', '홈리스 서바이버'));
+    t.appendChild(el('p', 'by', T('end.credit')));
+    var row = el('div', 'row');
+    row.appendChild(btn('e.watch', null, 'end.watch', startAuto));
+    row.appendChild(btn('e.replay', 'pri', 'end.replay', function () { stopAuto(false); reset(); mode = 'ask'; paintAll(); }));
+    t.appendChild(row); root.appendChild(t);
+    root.setAttribute('data-done', '1');
+  }
+
+  /* ===== 9. the beats (each choice changes numbers once; re-painting never re-applies effects) ===== */
+  function base(scene, when, day, paras) { view = { scene: scene, when: when, day: day, paras: paras, traces: null, why: '', card: null, choices: [] }; }
+  function result(paras, deltas, special, next, quiet) {
+    /* recording mode keeps only the result on screen, like a subtitle, so the frame never scrolls */
+    view.paras = view.paras.filter(function (p) { return p.c !== 'inner' && !(rec && auto.on); }).concat(paras.map(function (p) { return { k: p.k, c: p.c || 'result' }; }));
+    view.traces = { keys: traceKeys(deltas, special), deltas: deltas };
+    view.why = ''; view.choices = [{ id: 'next', k: 'ui.next', cont: true, act: next }];
+    show();
+    var ho = deltas.filter(function (x) { return x.k === 'ho'; })[0];
+    if (ho && ho.d >= LD.bloomAt && !quiet) { fx('bloom'); }
+  }
+  function beat1() {
+    st.tn = 0; root.removeAttribute('data-done');
+    base({ kind: 'park', time: 'dawn', p01: 'pass1', snow: 0 }, 'w.1', 1, [{ k: 's1' }, { k: 's1.p' }, { k: 's1.in', c: 'inner' }]);
+    view.choices = tunnel([
+      { id: 's1.c1', k: 's1.c1', tier: 1, act: function () { st.path.morning = 'trash'; result([{ k: 's1.r1' }], change(LD.trash), null, beat2); } },
+      { id: 's1.c2', k: 's1.c2', tier: 2, act: function () { st.path.morning = 'walk'; result([{ k: 's1.r2' }], change(LD.walk), null, beat2); } },
+      { id: 's1.c3', k: 's1.c3', tier: 3, mem: 'hello' },
+      { id: 's1.c4', k: 's1.c4', tier: 5, mem: 'draw' }
+    ], LD.tutorialForce);
+    mode = 'play'; show();
+  }
+  function beat2() {
+    base({ kind: 'kitchen', pose: 'queue' }, 'w.2', 1, [{ k: 's2' }]);
+    view.choices = tunnel([
+      { id: 's2.c1', k: 's2.c1', tier: 3, act: function () { st.path.meal = 'name'; var d = merge(change(LD.meal), change(LD.name)); result([{ k: 's2.r1' }], d, 'tr.name', beat3, true); fx('push'); fx('ladle'); } },
+      { id: 's2.c2', k: 's2.c2', tier: 1, act: function () { st.path.meal = 'head'; var d = merge(change(LD.meal), change(LD.head)); result([{ k: 's2.r2' }], d, null, beat3); fx('ladle'); } }
+    ]);
+    show();
+  }
+  function beat3() {
+    base({ kind: 'kitchen', pose: 'seat' }, 'w.2', 1, [{ k: 's3' }]);
+    view.choices = tunnel([
+      { id: 's3.c1', k: 's3.c1', tier: 5, mem: 'draw', act: drawPick },
+      { id: 's3.c2', k: 's3.c2', tier: 1, act: function () { st.path.draw = 'rest'; result([{ k: 's3.r2' }], change(LD.rest), null, beat4); } }
+    ]);
+    show();
+  }
+  function drawPick() {
+    view.paras = [{ k: 's3.q' }]; view.traces = null;
+    view.choices = tunnel(['d1', 'd2', 'd3'].map(function (d) {
+      return { id: 's3.' + d, k: 's3.' + d, tier: 5, act: function () {
+        st.path.draw = d; view.card = { d: d, live: true };
+        result([{ k: ['s3.r1', 's3.r1.' + d] }, { k: 's3.fold' }], change(LD.draw), null, beat4);
+      } };
+    }));
+    show();
+  }
+  function beat4() {
+    var drew = st.path.draw && st.path.draw !== 'rest';
+    base({ kind: 'park', time: 'noon', p01: 'near', snow: 1, paper: drew }, 'w.3', 1, [{ k: 's4' }]);
+    view.choices = tunnel([
+      { id: 's4.c1', k: 's4.c1', tier: 3, act: function () {
+        st.path.greet = true; st.faces.push('P01'); view.scene = { kind: 'park', time: 'noon', p01: 'turn', snow: 1, paper: drew, fresh: 'P01' };
+        result([{ k: 's4.r1' }], change(LD.greet), 'tr.face', beat5a);
+      } },
+      { id: 's4.c2', k: 's4.c2', tier: 1, act: function () {
+        st.path.greet = false; view.scene = { kind: 'park', time: 'noon', p01: 'leave', snow: 1, paper: drew };
+        result([{ k: 's4.r2' }], [], null, beat5a);
+      } }
+    ]);
+    show();
+  }
+  function beat5a() {
+    var f = st.path.draw && st.path.draw !== 'rest' ? st.path.draw : null;
+    base({ kind: 'house', pose: 'door', feat: f }, 'w.4', 2, [{ k: 's5a' }]);
+    view.choices = [{ id: 'next', k: 'ui.next', cont: true, act: beat5b }];
+    show();
+  }
+  function beat5b() {
+    var f = view.scene.feat, paras = [{ k: 's5' }];
+    if (f) { paras.push({ k: 's5.' + f, c: 'inner' }); }                     /* the player recognises him; the boy does not */
+    base({ kind: 'house', pose: 'meet', feat: f }, 'w.4', 2, paras);
+    if (f) { view.card = { d: f, live: false, mini: true }; }       /* B06: the remembered detail is compared on the folded drawing */
+    view.choices = tunnel([
+      { id: 's5.c1', k: 's5.c1', tier: 3, act: function () { st.path.visit = 'swing'; view.scene = { kind: 'house', pose: 'swing', feat: f }; result([{ k: 's5.r1' }], change(LD.swing), 'tr.son', beat5c); } },
+      { id: 's5.c2', k: 's5.c2', tier: 3, act: function () { st.path.visit = 'seat'; view.scene = { kind: 'house', pose: 'seat', feat: f }; result([{ k: 's5.r2' }], change(LD.seat), null, beat5c); } }
+    ]);
+    show();
+  }
+  function beat5c() {
+    var sc = view.scene, card = view.card;
+    base(sc, 'w.4', 2, [{ k: 's5.out' }]); view.card = card;
+    view.choices = [{ id: 'next', k: 'ui.next', cont: true, act: beat6 }];
+    show();
+  }
+  function beat6() {
+    change(LD.nights);
+    var drew = st.path.draw && st.path.draw !== 'rest', faced = st.faces.indexOf('P01') >= 0;
+    base({ kind: 'park', time: 'omen', p01: faced ? 'guard' : null, snow: 2, paper: drew }, 'w.5', 3, [{ k: 's6' }]);
+    view.choices = tunnel([
+      { id: 's6.c1', k: 's6.c1', tier: 1, act: function () {
+        if (faced) { st.path.omen = 'guard'; result([{ k: 's6.r1' }], change(LD.guard), 'tr.guard', ending); }
+        else { st.path.omen = 'robbed'; var lost = Math.ceil(st.money / 2); result([{ k: 's6.r2' }], change({ se: LD.robbed.se, money: -lost }), null, ending); }
+      } }
+    ]);
+    show();
+  }
+  function ending() {
+    mode = 'end'; paintAll(); locked = false;
+    if (auto.on) { root.setAttribute('data-auto-ms', String(Math.round(auto.active))); }
+  }
+
+  /* ===== 10. one activation path for every input (V2.4 B01, B02) ===== */
+  var ACT = new WeakMap();                                          /* button -> action, kept inside this demo only */
+  function activate(b, src) {
+    if (!b || !b.isConnected) { return false; }
+    if (src !== 'auto' && auto.on) { stopAuto(true); }             /* any person's input takes over from the guided play */
+    var fn = ACT.get(b); if (fn) { fn(); }
+    return true;
+  }
+  var hintTimer = null;
+  function showHint() { if (!view || view.why || !whyBox) { return; } whyBox.textContent = ''; whyBox.classList.add('hint'); addText(whyBox, 'span', null, function (lc) { return Tl(lc, 'ui.hint'); }); }
+  function hintable(b) {
+    b.addEventListener('focus', showHint);
+    b.addEventListener('mouseenter', function () { clearTimeout(hintTimer); hintTimer = setTimeout(showHint, 600); });
+    b.addEventListener('mouseleave', function () { clearTimeout(hintTimer); });
+    b.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') { clearTimeout(hintTimer); hintTimer = setTimeout(showHint, 500); } });
+    b.addEventListener('pointerup', function () { clearTimeout(hintTimer); });
+    b.addEventListener('pointercancel', function () { clearTimeout(hintTimer); });
+  }
+  root.addEventListener('keydown', function (e) {
+    kbd = true;
+    var det = root.querySelector('details.opts');
+    if (e.key === 'Escape') {
+      if (det && det.open) { det.open = false; var sm = det.querySelector('summary'); if (sm) { sm.focus(); } e.preventDefault(); return; }
+      if (auto.on) { stopAuto(true); e.preventDefault(); return; }
+    }
+    if (e.target && e.target.tagName === 'INPUT') { return; }
+    if (det && det.open) { return; }                                /* settings open: story shortcuts are off; closed again: they work */
+    if (mode !== 'play' || !choiceBox || !choiceBox.isConnected) { return; }
+    var b = null;
+    if (/^[1-5]$/.test(e.key)) { b = choiceBox.querySelector('[data-n="' + e.key + '"]'); }
+    else if (e.key === 'Enter' && (!e.target || e.target.tagName !== 'BUTTON')) { b = choiceBox.querySelector('[data-n="0"]'); }
+    if (b) { e.preventDefault(); b.focus({ preventScroll: true }); activate(b, 'user'); }
+  });
+  root.addEventListener('pointermove', function () { if (mode === 'end' && root.getAttribute('data-auto') === '1' && !auto.on) { root.removeAttribute('data-auto'); } });
+  root.addEventListener('pointerdown', function (e) {
+    kbd = false;
+    var d = root.querySelector('details.opts[open]'); if (d && !d.contains(e.target)) { d.open = false; }
+  });
+
+  /* ===== 11. guided play: about three minutes, the same every time (V2.0 ch.174, V2.4 B09) ===== */
+  var auto = { on: false, paused: false, i: 0, acc: 0, active: 0, last: 0, timer: null, pressing: null };
+  var SCRIPT = [
+    [3800, 't.play'], [5200, 'q.skip'],
+    [8000, 's1.c3'], [2600, 's1.c4'], [2600, 's1.c3'], [3000, 's1.c2'], [7000, 'next'],
+    [9500, 's2.c1'], [10000, 'next'],
+    [6000, 's3.c1'], [5500, 's3.d1'], [9000, 'next'],
+    [8000, 's4.c1'], [8500, 'next'],
+    [8000, 'next'], [10000, 's5.c1'], [9000, 'next'], [8000, 'next'],
+    [7500, 's6.c1'], [10000, 'next']
+  ];
+  function autoBar() {
+    var bar = el('div', 'autobar'); bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', T('ui.auto'));
+    var p = el('button', 'pill', T(auto.paused ? 'ui.resume' : 'ui.pause')); p.type = 'button'; p.setAttribute('data-fid', 'auto-pause');
+    p.addEventListener('click', function () { auto.paused = !auto.paused; root.setAttribute('data-paused', auto.paused ? '1' : '0'); p.textContent = T(auto.paused ? 'ui.resume' : 'ui.pause'); });
+    var t = el('button', 'pill', T('ui.takeover')); t.type = 'button'; t.setAttribute('data-fid', 'auto-take');
+    t.addEventListener('click', function () { stopAuto(true); var f = root.querySelector('.choices .ch:not(.dim)'); if (f) { f.focus({ preventScroll: true }); } });
+    bar.appendChild(p); bar.appendChild(t); return bar;
+  }
+  /* stopAuto(true): a person takes over. The current screen and its results stay exactly as they are. */
+  function stopAuto(takeOver) {
+    if (auto.timer) { clearInterval(auto.timer); auto.timer = null; }
+    if (auto.pressing) { auto.pressing.b.classList.remove('press'); auto.pressing = null; }
+    auto.on = false; auto.paused = false;
+    root.removeAttribute('data-paused');
+    if (takeOver || !(mode === 'end' && rec)) { root.removeAttribute('data-auto'); }
+    var bar = root.querySelector('.autobar'); if (bar) { bar.remove(); }
+  }
+  function autoTick() {
+    if (!auto.on) { return; }
+    var now = performance.now(), dt = Math.min(500, Math.max(0, now - auto.last)); auto.last = now;
+    if (auto.paused || document.hidden) { return; }                 /* a hidden tab never jumps several scenes on return */
+    auto.active += dt;
+    if (auto.pressing) {
+      auto.pressing.left -= dt;
+      if (auto.pressing.left > 0) { return; }
+      var pb = auto.pressing.b; auto.pressing = null; pb.classList.remove('press');
+      if (!pb.isConnected) { stopAuto(true); return; }
+      auto.i += 1; activate(pb, 'auto');
+      if (auto.i >= SCRIPT.length) { stopAuto(false); }
+      return;
+    }
+    var step = SCRIPT[auto.i]; if (!step) { stopAuto(false); return; }
+    auto.acc += dt;
+    if (auto.acc < step[0]) { return; }
+    var b = root.querySelector('[data-id="' + step[1] + '"]');
+    if (!b) { if (auto.acc > step[0] + 10000) { stopAuto(true); } return; }   /* the expected button is gone: hand over, keep the screen */
+    auto.acc = 0; b.classList.add('press'); auto.pressing = { b: b, left: 600 };
+  }
+  function startAuto() {
+    stopAuto(false); reset(); st.note = '';
+    auto.on = true; auto.paused = false; auto.i = 0; auto.acc = 0; auto.active = 0; auto.last = performance.now(); root.setAttribute('data-auto', '1');
+    mode = 'title'; paintAll();
+    auto.timer = setInterval(autoTick, 100);
+  }
+
+  /* ===== 12. settings that change at runtime ===== */
+  onMq(mqReduce, function () { paintAll(); });
+  onMq(mqNarrow, function () { if (mode === 'play' && stage) { paintScene(true); } });
+
+  reset();
+  if (rec) { startAuto(); } else { paintAll(); }
+  document.addEventListener('visibilitychange', function () { if (auto.on) { auto.last = performance.now(); } });
+})();
+</script>
